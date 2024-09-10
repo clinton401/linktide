@@ -7,11 +7,6 @@
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Usage](#usage)
-- [Folder Structure](#folder-structure)
-- [API Integration](#api-integration)
-- [Authentication](#authentication)
-- [Contributing](#contributing)
-- [License](#license)
 
 ---
 
