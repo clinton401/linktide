@@ -66,16 +66,14 @@ Ensure you have the following installed on your local machine:
    git clone https://github.com/your-username/social-media-manager.git
    cd social-media-manager
 
-2. **Install Dependencies**
-
-```bash
-npm install
+2. **Install Dependencies:**
+   ```bash
+   npm install
 
 
 3. **Set up environment variables:**
 
    Create a `.env.local` file in the root of the project with the following content:
-
    ```env
    MONGODB_URI=<your-mongodb-uri>
    NEXTAUTH_SECRET=<your-nextauth-secret>
@@ -85,16 +83,12 @@ npm install
    TWITTER_CLIENT_ID=<your-twitter-client-id>
    TWITTER_CLIENT_SECRET=<your-twitter-client-secret>
 
-   4. **Run the Development Server**
 
-```bash
-npm run dev
-
+4. **Run the Development Server:**
+   ```bash
+   npm run dev
 
 The application will be available at http://localhost:3000.
-
-
-
 
 ## Configuration
 
