@@ -74,14 +74,22 @@ Ensure you have the following installed on your local machine:
 3. **Set up environment variables:**
 
    Create a `.env.local` file in the root of the project with the following content:
+
    ```env
    MONGODB_URI=<your-mongodb-uri>
    NEXTAUTH_SECRET=<your-nextauth-secret>
-   NEXTAUTH_URL=http://localhost:3000
+   DOMAIN_URL=http://localhost:3000
    FACEBOOK_CLIENT_ID=<your-facebook-client-id>
    FACEBOOK_CLIENT_SECRET=<your-facebook-client-secret>
    TWITTER_CLIENT_ID=<your-twitter-client-id>
    TWITTER_CLIENT_SECRET=<your-twitter-client-secret>
+   GITHUB_CLIENT_ID=<your-github-client-id>
+   GITHUB_CLIENT_SECRET=<your-github-client-secret>
+   GOOGLE_CLIENT_ID=<your-google-client-id>
+   GOOGLE_CLIENT_SECRET=<your-google-client-secret>
+   EMAIL_PASS=<your-google-app-password>
+   EMAIL_USER=<your-email-address>
+
 
 
 4. **Run the Development Server:**

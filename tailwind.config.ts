@@ -55,7 +55,17 @@ const config: Config = {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
-  		}
+  		},
+		  screens: {
+			'lg': '992px',
+			
+		  },
+		  spacing: {
+			'p-half': '2.5%',
+		  },
+		  animation: {
+			"caret-blink": "caret-blink 1.25s ease-out infinite",
+		  },
   	}
   },
   plugins: [require("tailwindcss-animate")],
