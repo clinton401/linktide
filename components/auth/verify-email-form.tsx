@@ -1,5 +1,5 @@
 "use client";
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import { CardWrapper } from "@/components/card-wrapper";
 import { OtpSchema } from "@/schemas";
 import * as z from "zod";
@@ -14,24 +14,112 @@ import {
   FormDescription,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { LoadingButton } from "@/components/loading-button";
+import {verifyEmail} from "@/actions/verify-email"
 import {
     InputOTP,
     InputOTPGroup,
     InputOTPSeparator,
     InputOTPSlot,
   } from "@/components/ui/input-otp"
+  import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp"
+  import { useParams, useRouter } from 'next/navigation';
+  
+import { FormError } from "@/components/form-error";
+import { FormSuccess } from "@/components/form-success";
+import {useCountdown} from "@/hooks/use-countdown";
+import {regenerateEmailVerificationCode} from "@/actions/regenerate-email-verification-code";
+import {RegenerateButton} from "@/components/regenerate-button";
 export const VerifyEmailForm: FC = () => {
+  const [isPending, setIsPending] = useState(false);
+  const [isNewEmailPending, setIsNewEmailPending] = useState(false);
+  const [error, setError] = useState<undefined | string>(undefined);
+  const [success, setSuccess] = useState<undefined | string>(undefined);
+  const {id} = useParams();
+  const  { isNewClicked: isResendClicked, setIsNewClicked: setIsResendClicked, countdown: resetCounter } = useCountdown();
+  
+  const {push} = useRouter();
     const form = useForm<z.infer<typeof OtpSchema>>({
         resolver: zodResolver(OtpSchema),
         defaultValues: {
           otp: "",
         },
       })
-      function onSubmit(values: z.infer<typeof OtpSchema>) {
-       console.log(values)
+     async function onSubmit(values: z.infer<typeof OtpSchema>) {
+      const userId = Array.isArray(id) ? id[0] : id;
+        if(!userId || typeof userId !== "string" ) {
+          setError("Invalid user ID");
+          
+          setSuccess(undefined);
+          return ;
+        }
+        try{
+          setIsPending(true);
+          setError(undefined); 
+          setSuccess(undefined);
+          const data = await verifyEmail(values, userId);
+          const {error, success, redirectUrl} = data;
+      
+            setError(error); 
+     
+          
+            setSuccess(success); 
+         
+          if(redirectUrl) {
+            push(redirectUrl)
+          }
+        }catch(error) {
+          setSuccess(undefined);
+          setError("An unexpected error occurred.");
+          console.error(error)
+        } finally {
+          setIsPending(false);
+        }
+
       }
+      
+      async function resendCode () {
+        const userId = Array.isArray(id) ? id[0] : id;
+        if(!userId || typeof userId !== "string" ) {
+          setError("Invalid user ID");
+          
+          setSuccess(undefined);
+          return ;
+        }
+        try{
+          setIsNewEmailPending(true);
+          setIsResendClicked(false);
+          setError(undefined); 
+          setSuccess(undefined);
+         const data =  await  regenerateEmailVerificationCode(userId);
+         const {error, success, redirectUrl} = data;
+      
+         setError(error); 
+  
+       
+         setSuccess(success); 
+         if(redirectUrl) {
+          push(redirectUrl)
+        }
+      if(success) {
+        setIsNewEmailPending(false);
+        setIsResendClicked(true);
+      } else {
+        setIsNewEmailPending(false);
+        setIsResendClicked(false);
+      }
+      
+         
+        } catch(error){
+console.error(error);
+setIsNewEmailPending(false);
+setIsResendClicked(false);
+        }
+
+
+      }
+     
+      
   return (
     <CardWrapper
       backButtonUrl="/auth/login"
@@ -48,15 +136,18 @@ export const VerifyEmailForm: FC = () => {
               
               <FormControl >
                 <div className="w-full flex items-center justify-center ">
-                <InputOTP maxLength={6} {...field} >
-                  <InputOTPGroup autoFocus>
-                    <InputOTPSlot index={0}  autoFocus={true}/>
-                    <InputOTPSlot index={1} />
-                    <InputOTPSlot index={2} />
-                    <InputOTPSlot index={3} />
-                    <InputOTPSlot index={4} />
-                    <InputOTPSlot index={5} />
-                  </InputOTPGroup>
+                <InputOTP maxLength={6} {...field} pattern={REGEXP_ONLY_DIGITS_AND_CHARS}>
+                <InputOTPGroup>
+        <InputOTPSlot index={0} />
+        <InputOTPSlot index={1} />
+        <InputOTPSlot index={2} />
+      </InputOTPGroup>
+      <InputOTPSeparator />
+      <InputOTPGroup>
+        <InputOTPSlot index={3} />
+        <InputOTPSlot index={4} />
+        <InputOTPSlot index={5} />
+      </InputOTPGroup>
                 </InputOTP>
                 </div>
               </FormControl>
@@ -67,12 +158,19 @@ export const VerifyEmailForm: FC = () => {
             </FormItem>
           )}
         />
+        {error && <FormError message={error}/>}
+        {success && <FormSuccess message={success} />}
+ <LoadingButton message="Verify" isPending={isPending}/>
+
  
- <Button type="submit"  className="w-full">
-            Verify
-          </Button>
       </form>
     </Form>
+    <div className="w-full gap-4 flex flex-col justify-center items-center pt-4">
+    <p className="text-xs w-full text-center ">Didn't send code yet?</p>
+    <RegenerateButton isNewEmailPending={isNewEmailPending} isResendClicked={isResendClicked} resendCode={resendCode} resetCounter={resetCounter} />
+   
+    </div>
+    
     </CardWrapper>
   )
 }

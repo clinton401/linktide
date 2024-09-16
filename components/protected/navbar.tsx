@@ -1,15 +1,22 @@
 "use client"
 import { FC } from "react";
 import { SiGoogleanalytics } from "react-icons/si";
-import { CiSettings } from "react-icons/ci";
+import { CiSettings, CiSquarePlus } from "react-icons/ci";
 import { IoCreateOutline, IoCreate } from "react-icons/io5";
 import { IoMdSettings } from "react-icons/io";
 import { TbBrandGoogleAnalytics } from "react-icons/tb";
+import { FaSquarePlus } from "react-icons/fa6";
+import { MdOutlineDashboard, MdDashboard } from "react-icons/md";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
+import { FaUser } from "react-icons/fa";
 import Link from "next/link";
+import {useSession} from "next-auth/react";
+import { useCurrentUser } from "@/hooks/use-current-user";
 export const Navbar: FC = () => {
+  const user = useCurrentUser();
+  console.log(user);
   const pathname = usePathname();
   return (
     <header>
@@ -17,8 +24,8 @@ export const Navbar: FC = () => {
       <div className="flex w-[44px] flex-col items-center   justify-center">
         {" "}
         <Avatar>
-          <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-          <AvatarFallback>CN</AvatarFallback>
+          <AvatarImage src={user?.image || ""} alt={`${user?.image || "User"} image`} />
+          <AvatarFallback><FaUser/></AvatarFallback>
         </Avatar>
         <h3 className="truncate text-sm">Clinton</h3>
       </div>
@@ -26,9 +33,9 @@ export const Navbar: FC = () => {
       <Link href="/analytics/facebook">
           
             {pathname.startsWith("/analytics") ? (
-              <SiGoogleanalytics className="text-2xl text-white min-w-[26px]" />
+              <MdDashboard className="text-2xl text-white min-w-[26px]" />
             ) : (
-              <TbBrandGoogleAnalytics className="text-2xl min-w-[26px]" />
+              <MdOutlineDashboard className="text-2xl min-w-[26px]" />
               
             )}
           
@@ -38,9 +45,9 @@ export const Navbar: FC = () => {
         <Link href="/create-post">
           
             {pathname.startsWith("/create-post") ? (
-              <IoCreate className="text-2xl text-white min-w-[26px]" />
+              <FaSquarePlus className="text-2xl text-white min-w-[26px]" />
             ) : (
-              <IoCreateOutline className="text-2xl min-w-[26px]" />
+              <CiSquarePlus className="text-2xl min-w-[26px]" />
               
             )}
          
@@ -65,18 +72,18 @@ export const Navbar: FC = () => {
         <li>
           <Link href="/analytics/facebook">
           {pathname.startsWith("/analytics") ? (
-              <SiGoogleanalytics className="text-2xl text-foreground " />
+              <MdDashboard className="text-2xl text-foreground " />
             ) : (
-              <TbBrandGoogleAnalytics className="text-2xl " />
+              <MdOutlineDashboard className="text-2xl " />
               
             )}</Link>
         </li>
         <li>
           <Link href="/create-post">
           {pathname.startsWith("/create-post") ? (
-              <IoCreate className="text-2xl text-foreground " />
+              <FaSquarePlus className="text-2xl text-foreground " />
             ) : (
-              <IoCreateOutline className="text-2xl " />
+              <CiSquarePlus className="text-2xl " />
               
             )}</Link>
         </li>

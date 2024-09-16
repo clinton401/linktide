@@ -3,14 +3,14 @@ import {FC} from 'react'
 import {FcGoogle} from "react-icons/fc"
 import {FaGithub} from "react-icons/fa"
 import {Button} from "@/components/ui/button"
-// import {signIn} from "next-auth/react"
-// import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
+import {signIn} from "next-auth/react"
+import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
 export const Social: FC = () => {
   const onClick = (provider: "google"|"github") => {
   
-    // signIn(provider, {
-    //   callbackUrl: DEFAULT_LOGIN_REDIRECT
-    // })
+    signIn(provider, {
+      callbackUrl: DEFAULT_LOGIN_REDIRECT
+    })
 
   }
   return (

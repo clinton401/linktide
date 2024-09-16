@@ -1,6 +1,5 @@
 import {FC, ReactNode} from "react"
- 
-import { Button } from "@/components/ui/button"
+ import {bodoni} from "@/lib/fonts"
 import {
   Card,
   CardContent,
@@ -9,8 +8,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import logo from "../public/assets/logo.png"
+import {Images} from "@/components/images"
 import {Social} from "@/components/auth/social"
 import { CardBackButton } from "@/components/card-back-button"
 type CardWrapperProps = {
@@ -29,7 +28,13 @@ export const CardWrapper: FC<CardWrapperProps> =({
     return (
         <Card className=" w-full max-w-[350px]">
       <CardHeader className="flex flex-col *:text-center items-center justify-center ">
-        <CardTitle className="font-black text-3xl">Linktide</CardTitle>
+        <CardTitle className={`font-black flex items-center justify-center  ${bodoni.className} text-3xl`}>Linktide
+          <span className="relative w-[30px] aspect-square overflow-hidden ml-2">
+            <Images imgSrc={logo} alt="website logo"/>
+          
+          </span>
+         
+        </CardTitle>
         <CardDescription>{headerText}</CardDescription>
       </CardHeader>
       <CardContent>

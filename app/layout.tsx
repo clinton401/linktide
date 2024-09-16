@@ -1,19 +1,13 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
-import { Open_Sans } from "next/font/google";
 import "./globals.css";
 import {ThemeProvider} from "@/components/theme-provider"
-const openSans = Open_Sans({ subsets: ["latin"], weight: ["300" , "400" , "500" , "600" , "700" , "800"] });
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+import { SessionProvider } from "next-auth/react";
+import { Oswald } from "next/font/google";
+
+import {auth} from "@/auth";
+const oswald = Oswald({ subsets: ["latin"], weight: ["300" , "400" , "500" , "600" , "700" ] });
+
+
 
 export const metadata: Metadata = {
   title: {
@@ -25,15 +19,17 @@ export const metadata: Metadata = {
   // TODO: add graphql and twitter metadata 
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
   return (
+    <SessionProvider session={session}>
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${openSans.className}  antialiased`}
+        className={`${oswald.className}  antialiased`}
         id="body"
       >
           {/* <ThemeProvider
@@ -49,5 +45,6 @@ export default function RootLayout({
     
       </body>
     </html>
+    </SessionProvider>
   );
 }

@@ -7,7 +7,7 @@ export const ParentLayout: FC<ParentLayoutProps> = ({
     children
 }) => {
     return(
-        <main className="w-full h-dvh px-p-half bg-background md:pl-[76px]" id="protected">
+        <main className="w-full min-h-dvh px-p-half bg-background md:pl-[76px]" id="protected">
             <Navbar/>
             {children}
         </main>
