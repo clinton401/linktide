@@ -22,6 +22,7 @@ import { FormSuccess } from "@/components/form-success";
 import { RegenerateButton } from "@/components/regenerate-button";
 import { LoadingButton } from "@/components/loading-button";
 import {regenerateResetVerificationCode} from "@/actions/regenerate-reset-verification-code";
+import useGetRedirectUrl from "@/hooks/use-get-redirect-url";
 import {reset} from "@/actions/reset"
 export const ResetForm: FC = () => {
   const [isPending, setIsPending] = useState(false);
@@ -34,7 +35,7 @@ export const ResetForm: FC = () => {
     setIsNewClicked: setIsResendClicked,
     countdown: resetCounter,
   } = useCountdown();
-  
+  const redirect = useGetRedirectUrl();
   const [isTyping, setIsTyping] = useState(false);
   const { push } = useRouter();
   const form = useForm<z.infer<ReturnType<typeof ResetSchema>>>({
@@ -56,7 +57,7 @@ export const ResetForm: FC = () => {
   setIsPending(true);
   setError(undefined); 
   setSuccess(undefined);
-  const data = await reset(values, isCodeSent);
+  const data = await reset(values, isCodeSent, redirect);
   const {error, success, redirectUrl, isOtpSent} = data;
 
     setError(error); 
@@ -82,7 +83,7 @@ export const ResetForm: FC = () => {
   const regenerateCode = async() => {
     const emailValue = form.watch('email');
     if(!emailValue || typeof emailValue !== "string" ) {
-      setError("Invalid user ID");
+      setError("Invalid email");
       
       setSuccess(undefined);
       return ;
@@ -117,7 +118,7 @@ setIsResendClicked(false);
   }
   return (
     <CardWrapper
-      backButtonUrl="/auth/login"
+      backButtonUrl={`/auth/login${redirect ? `?redirect=${encodeURIComponent(redirect)}`: ""}`}
       headerText="Forgot your password?"
       backButtonLinkText="Back to login"
     >
@@ -178,13 +179,13 @@ setIsResendClicked(false);
           )}
            {error && <FormError message={error}/>}
         {success && <FormSuccess message={success} />}
- <LoadingButton message={isCodeSent ? "Confirm" : "Verify"} isPending={isPending}/>
+ <LoadingButton message={isCodeSent ? "Confirm" : "Verify"} isPending={isPending || isNewEmailPending}/>
         
         </form>
       </Form>
       {isCodeSent &&  <div className="w-full gap-4 flex flex-col justify-center items-center pt-4">
     <p className="text-xs w-full text-center ">Didn't send code yet?</p>
-    <RegenerateButton isNewEmailPending={isNewEmailPending} isResendClicked={isResendClicked} resendCode={regenerateCode} resetCounter={resetCounter} />
+    <RegenerateButton isNewEmailPending={isNewEmailPending || isPending} isResendClicked={isResendClicked} resendCode={regenerateCode} resetCounter={resetCounter} />
    
     </div>}
     </CardWrapper>

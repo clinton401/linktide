@@ -22,16 +22,18 @@ const ResetSchema = (isCodeSent: boolean) => z.object({
     }),
 });
 
-const LoginSchema = z.object({
+const LoginSchema =  z.object({
   email: z.string()
-    .trim() // Trims the email input
+    .trim() 
     .email({ message: "Email is required" })
     .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, { message: "Invalid email format" }),
   password: z.string()
-    .trim() // Trims the password input
+    .trim() 
     .min(1, {
       message: "Password is required",
     }),
+    twoFA: z.string().trim().min(6, { message: "Code must be at least 6 characters" })
+    .max(6, { message: "Code must be at most 6 characters" }).optional(),
 });
 
 const RegisterSchema = z.object({

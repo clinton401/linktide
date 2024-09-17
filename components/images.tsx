@@ -26,7 +26,7 @@ export const Images: FC<ImagesProps> = ({ imgSrc, alt, detailsPg = false }) => {
           isLoading ? "blur-sm grayscale" : "blur-0 grayscale-0"
         }`}
         fill={true}
-        onLoadingComplete={() => setIsLoading(false)} 
+        onLoad={() => setIsLoading(false)} 
       />
     </div>
   );

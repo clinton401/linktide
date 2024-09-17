@@ -44,9 +44,10 @@ const mongooseError = (err: MongooseErrorExtended) => {
 
     return ;
 }
-const otpGenerator = () => {
+const otpGenerator = (is10Mins?: boolean ) => {
     const verificationCode = crypto.randomBytes(3).toString('hex').toUpperCase();
-    const expiresAt = new Date(Date.now() + 3600000);
+    const additionNumber = is10Mins ? 600000 : 3_600_000;
+    const expiresAt = new Date(Date.now() + additionNumber);
 
     return { verificationCode, expiresAt }
 }

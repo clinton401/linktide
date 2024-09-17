@@ -10,14 +10,15 @@ import {appearAnimation} from "@/lib/framer-motion-utils";
 import {MotionComponent} from "@/components/framer-motion/motion-component"
 import {Images} from "@/components/images"
 import logo from "../public/assets/logo.png"
+import {bodoni} from "@/lib/fonts"
 export default function Home() {
   
   return (
     <main className="relative overflow-hidden min-h-dvh px-p-half py-8 flex items-center justify-center " id="auth">
     <MotionComponent variants={appearAnimation} initial="hidden" animate="visible" className="relative  items-center justify-center flex  flex-col gap-y-6   ">
-    <h1 className="text-center text-4xl flex items-center justify-center  sm:text-6xl font-black text-neutral-50">
+    <h1 className={`text-center text-4xl ${bodoni.className} flex items-center justify-center  sm:text-6xl font-black text-neutral-50`}>
       Welcome to Linktide
-      <span className="relative w-[40px] aspect-square overflow-hidden ml-2">
+      <span className="relative w-[50px] aspect-square overflow-hidden ml-2">
             <Images imgSrc={logo} alt="website logo"/>
           
           </span>

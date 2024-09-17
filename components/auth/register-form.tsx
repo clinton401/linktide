@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import {LoadingButton} from "@/components/loading-button";
 import {register} from "@/actions/register";
 import {useRouter} from "next/navigation";
-
+import useGetRedirectUrl from "@/hooks/use-get-redirect-url";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 export const RegisterForm: FC = () => {
@@ -28,6 +28,7 @@ export const RegisterForm: FC = () => {
   const [success, setSuccess] = useState<undefined | string>(undefined);
   const [isTyping, setIsTyping] = useState(false);
   const {push} = useRouter();
+  const redirect = useGetRedirectUrl();
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
@@ -46,7 +47,7 @@ export const RegisterForm: FC = () => {
       setIsPending(true);
       setError(undefined); 
       setSuccess(undefined);
-      const data = await register(values);
+      const data = await register(values, redirect);
       const {error, success, redirectUrl} = data;
   
         setError(error); 
@@ -68,7 +69,7 @@ export const RegisterForm: FC = () => {
   return (
     <CardWrapper
       backButtonText="Already have an account?"
-      backButtonUrl="/auth/login"
+      backButtonUrl={`/auth/login${redirect ? `?redirect=${encodeURIComponent(redirect)} `: ""}`} 
       headerText="Create an account"
       showSocial
       backButtonLinkText="Sign in"
@@ -121,16 +122,7 @@ export const RegisterForm: FC = () => {
               </FormItem>
             )}
           />
-          <span className="flex items-center justify-end">
-            <Button
-              size="sm"
-              variant="link"
-              asChild
-              className="px-0 font-normal"
-            >
-              <Link href="/auth/reset">Forgot Password</Link>
-            </Button>
-          </span>
+          
           {error && <FormError message={error}/>}
           {success && <FormSuccess message={success} />}
        <LoadingButton isPending={isPending} message="Create account"/>

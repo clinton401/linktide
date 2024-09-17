@@ -7,7 +7,8 @@ import { connectToDatabase } from "@/lib/db";
 
 export const verifyEmail = async (
   values: z.infer<typeof OtpSchema>,
-  userId: string
+  userId: string,
+  redirect: string | null
 ) => {
   const validatedFields = OtpSchema.safeParse(values);
   if (!validatedFields.success) {
@@ -26,9 +27,10 @@ export const verifyEmail = async (
   }
   const validId = new Types.ObjectId(userId);
   const { otp } = validatedFields.data;
-  await connectToDatabase();
+  
 
   try {
+    await connectToDatabase();
     const user = await findById(validId);
     if (!user) {
       return {
@@ -49,7 +51,7 @@ export const verifyEmail = async (
     if (user.emailVerification.verified) {
       return {
         success: "Email has already been registered",
-        redirectUrl: "/auth/login",
+        redirectUrl: `/auth/login${redirect ? `?redirect=${encodeURIComponent(redirect)}`: ""}`,
         error: undefined,
       };
     }
@@ -64,7 +66,7 @@ export const verifyEmail = async (
         redirectUrl: undefined,
       };
     }
-    const isOtpValid = otp === user.emailVerification?.code;
+    const isOtpValid = otp.toUpperCase() === user.emailVerification?.code;
     if(!isOtpValid) return {
         error: "Invalid code",
         success: undefined,
@@ -82,7 +84,7 @@ export const verifyEmail = async (
 
     return {
       success: "Email verified",
-      redirectUrl: "/auth/login",
+      redirectUrl: `/auth/login${redirect ? `?redirect=${encodeURIComponent(redirect)}`: ""}`,
       error: undefined,
     };
   } catch (err) {

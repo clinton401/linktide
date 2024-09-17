@@ -5,11 +5,14 @@ import {FaGithub} from "react-icons/fa"
 import {Button} from "@/components/ui/button"
 import {signIn} from "next-auth/react"
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
+import useGetRedirectUrl from "@/hooks/use-get-redirect-url";
 export const Social: FC = () => {
+  const redirect = useGetRedirectUrl();
   const onClick = (provider: "google"|"github") => {
-  
+    
+
     signIn(provider, {
-      callbackUrl: DEFAULT_LOGIN_REDIRECT
+      callbackUrl: redirect ? redirect : DEFAULT_LOGIN_REDIRECT
     })
 
   }

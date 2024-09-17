@@ -25,6 +25,7 @@ import {
   import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp"
   import { useParams, useRouter } from 'next/navigation';
   
+import useGetRedirectUrl from "@/hooks/use-get-redirect-url";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import {useCountdown} from "@/hooks/use-countdown";
@@ -37,7 +38,7 @@ export const VerifyEmailForm: FC = () => {
   const [success, setSuccess] = useState<undefined | string>(undefined);
   const {id} = useParams();
   const  { isNewClicked: isResendClicked, setIsNewClicked: setIsResendClicked, countdown: resetCounter } = useCountdown();
-  
+  const redirect = useGetRedirectUrl();
   const {push} = useRouter();
     const form = useForm<z.infer<typeof OtpSchema>>({
         resolver: zodResolver(OtpSchema),
@@ -57,7 +58,7 @@ export const VerifyEmailForm: FC = () => {
           setIsPending(true);
           setError(undefined); 
           setSuccess(undefined);
-          const data = await verifyEmail(values, userId);
+          const data = await verifyEmail(values, userId, redirect);
           const {error, success, redirectUrl} = data;
       
             setError(error); 
@@ -91,7 +92,7 @@ export const VerifyEmailForm: FC = () => {
           setIsResendClicked(false);
           setError(undefined); 
           setSuccess(undefined);
-         const data =  await  regenerateEmailVerificationCode(userId);
+         const data =  await  regenerateEmailVerificationCode(userId, redirect);
          const {error, success, redirectUrl} = data;
       
          setError(error); 
@@ -122,7 +123,7 @@ setIsResendClicked(false);
       
   return (
     <CardWrapper
-      backButtonUrl="/auth/login"
+    backButtonUrl={`/auth/login${redirect ? `?redirect=${encodeURIComponent(redirect)} `: ""}`} 
       headerText="Verify your email"
       backButtonLinkText="Back to login"
     >
@@ -160,14 +161,14 @@ setIsResendClicked(false);
         />
         {error && <FormError message={error}/>}
         {success && <FormSuccess message={success} />}
- <LoadingButton message="Verify" isPending={isPending}/>
+ <LoadingButton message="Verify" isPending={isPending || isNewEmailPending}/>
 
  
       </form>
     </Form>
     <div className="w-full gap-4 flex flex-col justify-center items-center pt-4">
     <p className="text-xs w-full text-center ">Didn't send code yet?</p>
-    <RegenerateButton isNewEmailPending={isNewEmailPending} isResendClicked={isResendClicked} resendCode={resendCode} resetCounter={resetCounter} />
+    <RegenerateButton isNewEmailPending={isNewEmailPending || isPending} isResendClicked={isResendClicked} resendCode={resendCode} resetCounter={resetCounter} />
    
     </div>
     
