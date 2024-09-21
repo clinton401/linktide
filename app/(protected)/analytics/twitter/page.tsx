@@ -1,8 +1,6 @@
 import { FC } from "react";
 import { AnalyticsParentComponent } from "@/components/protected/analytics-parent-component";
 import { RiTwitterXLine } from "react-icons/ri";
-import { bodoni } from '@/lib/fonts';
-import { ModeToggle } from "@/components/mode-toggle";
 import { twitterData } from "@/actions/twitter-data";
 import { getSocialAuthState } from "@/hooks/get-social-auth-state";
 const TwitterPage: FC = async() => {

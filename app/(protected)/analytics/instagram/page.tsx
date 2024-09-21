@@ -1,9 +1,7 @@
 import { FC } from "react";
-import { bodoni } from '@/lib/fonts';
 import { AnalyticsParentComponent } from "@/components/protected/analytics-parent-component";
 import { CiInstagram } from "react-icons/ci";
 
-import { ModeToggle } from "@/components/mode-toggle";
 const InstagramPage: FC = () => {
   return (
     <AnalyticsParentComponent
