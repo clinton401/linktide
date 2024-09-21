@@ -1,4 +1,4 @@
-"use server"
+
 import mongoose from "mongoose";
 
 const { MONGODB_URI } = process.env;
@@ -9,6 +9,7 @@ if (!MONGODB_URI) {
 }
 
 export const connectToDatabase = async () => {
+  "use server"
   if (typeof window !== 'undefined') {
     throw new Error("This function should only be run on the server");
   }
