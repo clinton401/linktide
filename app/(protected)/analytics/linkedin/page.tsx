@@ -1,8 +1,7 @@
 import { FC } from "react";
 import { AnalyticsParentComponent } from "@/components/protected/analytics-parent-component";
 import { SlSocialLinkedin } from "react-icons/sl";
-import { bodoni } from "@/lib/fonts";
-import { ModeToggle } from "@/components/mode-toggle";
+import { bodoni } from "@/lib/fonts"
 import { useGetSocialAuthState } from "@/hooks/use-get-social-auth-state";
 import { linkedinData } from "@/actions/linkedin-data";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

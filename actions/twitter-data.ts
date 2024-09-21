@@ -3,7 +3,7 @@ import { useGetSocialAuthState } from "@/hooks/use-get-social-auth-state";
 import { useGetSocialMediaDetails } from "@/hooks/use-get-social-media-details";
 import axios from "axios";
 import { findOne } from "@/data/users-data";
-import { useGetServerUser } from "@/hooks/use-get-server-user";
+import { getServerUser } from "@/hooks/get-server-user";
 import { connectToDatabase } from "@/lib/db";
 import type { ISocial } from "@/models/social-media-schema";
 import { oauth } from "@/lib/oauth-twitter-client";
@@ -13,7 +13,7 @@ type UserData = {
   username: string;
 };
 export const twitterData = async () => {
-  const session = await useGetServerUser();
+  const session = await getServerUser();
   const socialAuthState = await useGetSocialAuthState("twitter");
   const socialMediaDetails = await useGetSocialMediaDetails("twitter");
 

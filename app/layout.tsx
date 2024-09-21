@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import {ThemeProvider} from "@/components/theme-provider"
 import { SessionProvider } from "next-auth/react";
 import { Oswald } from "next/font/google";
 

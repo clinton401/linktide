@@ -1,10 +1,6 @@
-import Image from "next/image";
-import {Poppins} from "next/font/google";
+
 import {FuzzyOverlay} from "@/components/framer-motion/fuzzy-overlay"
-const font = Poppins({
-  subsets: ["latin"],
-  weight: ["600"]
-})
+
 import {LoginButton} from "@/components/login-button";
 import {appearAnimation} from "@/lib/framer-motion-utils";
 import {MotionComponent} from "@/components/framer-motion/motion-component"

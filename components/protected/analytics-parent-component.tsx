@@ -5,11 +5,9 @@ import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/mode-toggle";
 import { bodoni } from "@/lib/fonts";
 import axios from "axios";
-import { useGetSocialMediaDetails } from "@/hooks/use-get-social-media-details";
 import { MiniLoader } from "@/components/mini-loader";
 type AnalyticsProps = {
-  children?: ReactNode;
-  icon: any;
+  icon: ReactNode;
   name: string;
   redirectUrl: string;
 };
@@ -17,11 +15,9 @@ export const AnalyticsParentComponent: FC<AnalyticsProps> = ({
   icon,
   name,
   redirectUrl,
-  children,
 }) => {
   const [error, setError] = useState<undefined | string>(undefined);
   const [isPending, setIsPending] = useState(false);
-  const platform = undefined;
   const authenticateUser = async() => {
     try{
         setIsPending(true);

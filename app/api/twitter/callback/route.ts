@@ -1,7 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import axios from "axios";
-import { useGetServerUser } from "@/hooks/use-get-server-user";
+import { getServerUser } from "@/hooks/get-server-user";
 import { findOne } from "@/data/users-data";
 import type { ISocial } from "@/models/social-media-schema";
 import { oauth } from "@/lib/oauth-twitter-client";
@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
 
     const refreshTokenExpiresAt = Date.now() + 6 * 30 * 24 * 60 * 60 * 1000;
 
-    const session = await useGetServerUser();
+    const session = await getServerUser();
     if (!session || !session.email) {
       return NextResponse.redirect(new URL("/analytics/login", request.url));
     }

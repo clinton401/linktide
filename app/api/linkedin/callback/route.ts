@@ -2,7 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import AuthState from "@/models/auth-state-schema";
 import { connectToDatabase } from "@/lib/db";
 import axios from "axios";
-import { useGetServerUser } from "@/hooks/use-get-server-user";
+import { getServerUser } from "@/hooks/get-server-user";
 import { findOne } from "@/data/users-data";
 import type { ISocial } from "@/models/social-media-schema";
 
@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
 
 
 
-    const session = await useGetServerUser();
+    const session = await getServerUser();
     if (!session || !session.email) {
       return NextResponse.redirect(new URL("/analytics/login", request.url));
     }

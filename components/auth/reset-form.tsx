@@ -14,7 +14,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useCountdown } from "@/hooks/use-countdown";
 import { FormError } from "@/components/form-error";
@@ -184,7 +183,8 @@ setIsResendClicked(false);
         </form>
       </Form>
       {isCodeSent &&  <div className="w-full gap-4 flex flex-col justify-center items-center pt-4">
-    <p className="text-xs w-full text-center ">Didn't send code yet?</p>
+        <p className="text-xs w-full text-center ">Didn&apos;t send code yet?</p>
+
     <RegenerateButton isNewEmailPending={isNewEmailPending || isPending} isResendClicked={isResendClicked} resendCode={regenerateCode} resetCounter={resetCounter} />
    
     </div>}

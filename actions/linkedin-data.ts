@@ -3,7 +3,7 @@ import { useGetSocialAuthState } from "@/hooks/use-get-social-auth-state";
 import { useGetSocialMediaDetails } from "@/hooks/use-get-social-media-details";
 import axios from "axios";
 import { findOne } from "@/data/users-data";
-import { useGetServerUser } from "@/hooks/use-get-server-user";
+import { getServerUser } from "@/hooks/get-server-user";
 import { connectToDatabase } from "@/lib/db";
 import type { ISocial } from "@/models/social-media-schema";
 import User from "@/models/user-schema";
@@ -22,7 +22,7 @@ export const linkedinData = async (): Promise<{
   data: UserData | undefined;
   error: string | undefined;
 }> => {
-  const session = await useGetServerUser();
+  const session = await getServerUser();
   const socialAuthState = await useGetSocialAuthState("linkedin");
   const socialMediaDetails = await useGetSocialMediaDetails("linkedin");
 

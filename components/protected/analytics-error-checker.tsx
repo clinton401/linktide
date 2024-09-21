@@ -1,7 +1,7 @@
 "use client"
 import {FC, ReactNode, useEffect, useState} from 'react'
 import { ErrorComp } from '@/components/error-comp';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 export const AnalyticsErrorChecker: FC<{children: ReactNode}> = ({children}) => {
     const [isError, setIsError] = useState<undefined | string>(undefined);
     const searchParams = useSearchParams();

@@ -1,6 +1,7 @@
-import { MongooseError, Error as MongooseErrorBase } from 'mongoose';
-import crypto, {randomBytes} from "crypto";
+import { Error as MongooseErrorBase } from 'mongoose';
+import crypto, { randomBytes } from "crypto";
 import { v4 as uuidv4 } from 'uuid';
+
 interface ValidationErrorDetails {
     [key: string]: {
         properties: {
@@ -20,7 +21,7 @@ const mongooseError = (err: MongooseErrorExtended) => {
     console.log(`Error message: ${err.message}`);
     console.log(err.errors);
 
-    let errors: Record<string, string | undefined> = {
+    const errors: Record<string, string | undefined> = { // Change from let to const
         username: undefined,
         email: undefined,
         password: undefined
@@ -42,28 +43,30 @@ const mongooseError = (err: MongooseErrorExtended) => {
         return errors;
     }
 
-    return ;
-}
-const otpGenerator = (is10Mins?: boolean ) => {
+    return;
+};
+
+const otpGenerator = (is10Mins?: boolean) => {
     const verificationCode = crypto.randomBytes(3).toString('hex').toUpperCase();
     const additionNumber = is10Mins ? 600000 : 3_600_000;
     const expiresAt = new Date(Date.now() + additionNumber);
 
-    return { verificationCode, expiresAt }
-}
+    return { verificationCode, expiresAt };
+};
+
 const idGenerator = () => {
     const verificationCode = uuidv4();
     const expiresAt = new Date(Date.now() + 3600000);
 
-    return { verificationCode, expiresAt }
-}
+    return { verificationCode, expiresAt };
+};
+
 const generateRandomState = (length = 16) => {
     const state = randomBytes(length).toString('hex');
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); 
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
     return { state, expiresAt };
 };
 
-
 export {
     mongooseError, otpGenerator, idGenerator, generateRandomState
-}
+};

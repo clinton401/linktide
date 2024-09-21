@@ -105,7 +105,7 @@ export const LoginForm: FC = () => {
   };
   return (
     <CardWrapper
-      backButtonText="Don't have an account?"
+      backButtonText="Don&apos;t have an account?"
       backButtonUrl={`/auth/register${
         redirect ? `?redirect=${encodeURIComponent(redirect)} ` : ""
       }`}
@@ -195,7 +195,7 @@ export const LoginForm: FC = () => {
       </Form>
       {is2FA && (
         <div className="w-full gap-4 flex flex-col justify-center items-center pt-4">
-          <p className="text-xs w-full text-center ">Didn't send code yet?</p>
+          <p className="text-xs w-full text-center">Didn't send code yet?</p>
           <RegenerateButton
             isNewEmailPending={isNewEmailPending || isPending}
             isResendClicked={isResendClicked}

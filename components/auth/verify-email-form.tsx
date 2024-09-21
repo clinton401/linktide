@@ -1,5 +1,5 @@
 "use client";
-import { FC, useState, useEffect } from "react";
+import { FC, useState } from "react";
 import { CardWrapper } from "@/components/card-wrapper";
 import { OtpSchema } from "@/schemas";
 import * as z from "zod";
@@ -10,7 +10,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormDescription,
   FormMessage,
 } from "@/components/ui/form";
@@ -167,7 +166,8 @@ setIsResendClicked(false);
       </form>
     </Form>
     <div className="w-full gap-4 flex flex-col justify-center items-center pt-4">
-    <p className="text-xs w-full text-center ">Didn't send code yet?</p>
+    <p className="text-xs w-full text-center ">Didn&apos;t send code yet?</p>
+
     <RegenerateButton isNewEmailPending={isNewEmailPending || isPending} isResendClicked={isResendClicked} resendCode={resendCode} resetCounter={resetCounter} />
    
     </div>

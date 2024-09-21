@@ -5,8 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { RegisterSchema } from "@/schemas";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import {
   Form,
   FormControl,

@@ -1,18 +1,14 @@
 "use client";
-import { FC, useEffect } from "react";
-import { SiGoogleanalytics } from "react-icons/si";
+import { FC } from "react";
 import { CiSettings, CiSquarePlus } from "react-icons/ci";
 import { IoMdSettings } from "react-icons/io";
 import { FaSquarePlus } from "react-icons/fa6";
 import { MdOutlineDashboard, MdDashboard } from "react-icons/md";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import { FaUser } from "react-icons/fa";
 import Link from "next/link";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { useSearchParams, useRouter } from 'next/navigation';
-// import { useDeleteQuery } from "@/hooks/use-delete-query";
 
 export const Navbar: FC = () => {
   const user = useCurrentUser();
