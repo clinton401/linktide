@@ -46,4 +46,11 @@ export const config = {
     "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
     "/(api|trpc)(.*)",
   ],
+  runtime: "nodejs",
+  unstable_allowDynamic: [
+      // allows a single file
+      "/src/db/lib/db",
+      // use a glob to allow anything in the function-bind 3rd party module
+      "/node_modules/mongoose/dist/**",
+  ]
 };
