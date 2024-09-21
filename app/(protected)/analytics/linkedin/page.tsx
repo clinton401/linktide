@@ -2,12 +2,12 @@ import { FC } from "react";
 import { AnalyticsParentComponent } from "@/components/protected/analytics-parent-component";
 import { SlSocialLinkedin } from "react-icons/sl";
 import { bodoni } from "@/lib/fonts"
-import { useGetSocialAuthState } from "@/hooks/use-get-social-auth-state";
+import { getSocialAuthState } from "@/hooks/get-social-auth-state";
 import { linkedinData } from "@/actions/linkedin-data";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { FaUser } from "react-icons/fa";
 const LinkedInPage: FC = async () => {
-  const isAuth = await useGetSocialAuthState("linkedin");
+  const isAuth = await getSocialAuthState("linkedin");
   if (!isAuth) {
     return (
       <AnalyticsParentComponent

@@ -39,7 +39,7 @@ export const RegisterForm: FC = () => {
     if(isTyping && error ) {
       setError(undefined)
     }
-  }, [isTyping]);
+  }, [isTyping, error]);
   async function onSubmit(values: z.infer<typeof RegisterSchema>) {
     try{
       setIsPending(true);

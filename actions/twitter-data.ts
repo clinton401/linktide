@@ -1,7 +1,7 @@
 "use server";
-import { useGetSocialAuthState } from "@/hooks/use-get-social-auth-state";
-import { useGetSocialMediaDetails } from "@/hooks/use-get-social-media-details";
-import axios from "axios";
+import { getSocialAuthState } from "@/hooks/get-social-auth-state";
+import { getSocialMediaDetails } from "@/hooks/get-social-media-details";
+// import axios from "axios";
 import { findOne } from "@/data/users-data";
 import { getServerUser } from "@/hooks/get-server-user";
 import { connectToDatabase } from "@/lib/db";
@@ -14,8 +14,8 @@ type UserData = {
 };
 export const twitterData = async () => {
   const session = await getServerUser();
-  const socialAuthState = await useGetSocialAuthState("twitter");
-  const socialMediaDetails = await useGetSocialMediaDetails("twitter");
+  const socialAuthState = await getSocialAuthState("twitter");
+  const socialMediaDetails = await getSocialMediaDetails("twitter");
 
   if (
     !session ||

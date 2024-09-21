@@ -4,9 +4,9 @@ import { RiTwitterXLine } from "react-icons/ri";
 import { bodoni } from '@/lib/fonts';
 import { ModeToggle } from "@/components/mode-toggle";
 import { twitterData } from "@/actions/twitter-data";
-import { useGetSocialAuthState } from "@/hooks/use-get-social-auth-state";
+import { getSocialAuthState } from "@/hooks/get-social-auth-state";
 const TwitterPage: FC = async() => {
-  const isAuth = await useGetSocialAuthState("twitter");
+  const isAuth = await getSocialAuthState("twitter");
   if (!isAuth) {
     return (
       <AnalyticsParentComponent

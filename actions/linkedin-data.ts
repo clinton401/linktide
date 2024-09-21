@@ -1,12 +1,11 @@
 "use server";
-import { useGetSocialAuthState } from "@/hooks/use-get-social-auth-state";
-import { useGetSocialMediaDetails } from "@/hooks/use-get-social-media-details";
+import { getSocialAuthState } from "@/hooks/get-social-auth-state";
+import { getSocialMediaDetails } from "@/hooks/get-social-media-details";
 import axios from "axios";
 import { findOne } from "@/data/users-data";
 import { getServerUser } from "@/hooks/get-server-user";
 import { connectToDatabase } from "@/lib/db";
 import type { ISocial } from "@/models/social-media-schema";
-import User from "@/models/user-schema";
 type UserData = {
   sub: string;
   name: string;
@@ -23,8 +22,8 @@ export const linkedinData = async (): Promise<{
   error: string | undefined;
 }> => {
   const session = await getServerUser();
-  const socialAuthState = await useGetSocialAuthState("linkedin");
-  const socialMediaDetails = await useGetSocialMediaDetails("linkedin");
+  const socialAuthState = await getSocialAuthState("linkedin");
+  const socialMediaDetails = await getSocialMediaDetails("linkedin");
 
   if (
     !session ||
