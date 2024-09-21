@@ -10,12 +10,7 @@ const InstagramPage: FC = () => {
       name="instagram"
       redirectUrl="/api/instagram/auth"
       icon={<CiInstagram className="ml-1" />}
-    >
-      <h1 className={` ${bodoni.className} text-6xl font-black`}>
-        Welcome to analytics page
-      </h1>
-      <ModeToggle />
-    </AnalyticsParentComponent>
+    />
   );
 };
 
