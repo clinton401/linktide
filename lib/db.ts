@@ -9,6 +9,9 @@ if (!MONGODB_URI) {
 }
 
 export const connectToDatabase = async () => {
+  if (typeof window !== 'undefined') {
+    throw new Error("This function should only be run on the server");
+  }
   try {
     const { connection } = await mongoose.connect(MONGODB_URI);
     if (connection.readyState === 1) {
