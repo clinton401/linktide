@@ -2,12 +2,14 @@
 import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { bodoni } from '@/lib/fonts';
-import {FuzzyOverlay} from "@/components/framer-motion/fuzzy-overlay"
-
 function ProtectedErrorPage({ error, reset }: { error: Error,  reset: () => void }) {
     useEffect(() => {
         console.error(`${error}`);
     }, [error]);
+    const refreshHandler = () => {
+   
+      reset();
+    }
     return (
       <main className=" min-h-dvh  overflow-hidden relative py-4 px-p-half flex flex-col items-center gap-4 justify-center ">
         <h1
@@ -21,14 +23,10 @@ function ProtectedErrorPage({ error, reset }: { error: Error,  reset: () => void
           {error.message}
         </h2>
         <Button
-          onClick={
-            // Attempt to recover by trying to re-render the segment
-            () => reset()
-          }
+          onClick={refreshHandler}
         >
           Try Again
         </Button>
-        <FuzzyOverlay/>
       </main>
     );
 }

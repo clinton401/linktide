@@ -1,5 +1,5 @@
 import { MongooseError, Error as MongooseErrorBase } from 'mongoose';
-import crypto from "crypto";
+import crypto, {randomBytes} from "crypto";
 import { v4 as uuidv4 } from 'uuid';
 interface ValidationErrorDetails {
     [key: string]: {
@@ -57,8 +57,13 @@ const idGenerator = () => {
 
     return { verificationCode, expiresAt }
 }
+const generateRandomState = (length = 16) => {
+    const state = randomBytes(length).toString('hex');
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); 
+    return { state, expiresAt };
+};
 
 
 export {
-    mongooseError, otpGenerator, idGenerator
+    mongooseError, otpGenerator, idGenerator, generateRandomState
 }

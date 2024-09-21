@@ -1,3 +1,3 @@
 
-import {  Bodoni_Moda } from "next/font/google";
-export const bodoni = Bodoni_Moda({ subsets: ["latin"], weight: [ "400" , "500" , "600" , "700", "800", "900" ] });
+import {  Bodoni_Moda, Abril_Fatface } from "next/font/google";
+export const bodoni = Abril_Fatface({ subsets: ["latin"], weight: [ "400" ] });

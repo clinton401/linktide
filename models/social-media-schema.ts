@@ -5,6 +5,8 @@ export interface ISocial extends Document {
   accessToken?: string;
   expiresAt?: Date;
   refreshToken?: string;
+  refreshTokenExpiresAt?: Date;
+  userId?: string;
 }
 
 const SocialMediaSchema: Schema<ISocial> = new Schema({
@@ -16,12 +18,21 @@ const SocialMediaSchema: Schema<ISocial> = new Schema({
     type: Schema.Types.String,
     default: null,
   },
-  expiresAt: {
-    type: Schema.Types.Date,
+  userId: {
+    type: Schema.Types.String,
     default: null,
   },
+  expiresAt: {
+    type: Schema.Types.Date,
+    default: () => Date.now() + 3_000_000,
+  },
+  
   refreshToken: {
     type: Schema.Types.String,
+    default: null,
+  },
+  refreshTokenExpiresAt: {
+    type: Schema.Types.Date,
     default: null,
   },
 });

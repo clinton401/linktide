@@ -25,9 +25,9 @@ export const SocialMediaLinks: FC = () => {
       {socialMediaPlatforms.map((platform) => {
         const icon = platform.icon;
         return (
-          <Button variant={pathname === platform.url ? "secondary": "outline"} className="flex w-full items-center text-sm gap-2"  key={platform.name}>
-           {icon}
-           <Link href={platform.url}>{platform.name}</Link>
+          <Button variant={pathname === platform.url ? "secondary": "outline"} className="flex w-full items-center text-sm gap-2" asChild key={platform.name}>
+        
+           <Link href={platform.url}>   {icon} {platform.name}</Link>
           </Button>
         );
       })}

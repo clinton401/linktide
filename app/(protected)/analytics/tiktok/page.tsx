@@ -7,7 +7,7 @@ const TikTokPage: FC = () => {
   return (
     <AnalyticsParentComponent
       name="tiktok"
-      redirectUrl="/analytics/tiktok"
+      redirectUrl="/api/tiktok/auth"
       icon={<PiTiktokLogo className="ml-1" />}
     >
       <h1 className={` ${bodoni.className} text-6xl font-black`}>

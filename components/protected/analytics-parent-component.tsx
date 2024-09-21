@@ -1,29 +1,81 @@
-"use client"
-import {FC, ReactNode} from 'react'
-import {Button} from "@/components/ui/button"
+"use client";
+import { FC, ReactNode, useState } from "react";
+import { Button } from "@/components/ui/button";
 
-import {ModeToggle} from "@/components/mode-toggle"
-import { bodoni } from '@/lib/fonts';
-import Link from "next/link"
+import { ModeToggle } from "@/components/mode-toggle";
+import { bodoni } from "@/lib/fonts";
+import axios from "axios";
+import { useGetSocialMediaDetails } from "@/hooks/use-get-social-media-details";
+import { MiniLoader } from "@/components/mini-loader";
 type AnalyticsProps = {
-    children: ReactNode,
-    icon:  any,
-    name: string,
-    redirectUrl: string
-}
-export const AnalyticsParentComponent: FC<AnalyticsProps> = ({icon, name, redirectUrl, children}) => {
-    const isAuthenticated = false;
-    if(!isAuthenticated) return <section className='w-full px-[5%] min-h-dvh flex flex-col gap-4 items-center justify-center'>
-        <ModeToggle/>
-        <h2 className={`font-semibold text-2xl w-full  lg:w-3/4 ${bodoni.className} text-center`}>You need to be logged in to view this content. Please log in to your account to continue.</h2>
-        <Button asChild className='flex items-center ' >
-            <Link href={redirectUrl}>Login with {name} {icon}</Link>
+  children?: ReactNode;
+  icon: any;
+  name: string;
+  redirectUrl: string;
+};
+export const AnalyticsParentComponent: FC<AnalyticsProps> = ({
+  icon,
+  name,
+  redirectUrl,
+  children,
+}) => {
+  const [error, setError] = useState<undefined | string>(undefined);
+  const [isPending, setIsPending] = useState(false);
+  const platform = undefined;
+  const authenticateUser = async() => {
+    try{
+        setIsPending(true);
+        const response = await axios.get(redirectUrl, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }); 
+           const { redirectTo } = response.data;
 
-        </Button>
-    </section>
-  return (
-    <section className="w-full">
-        {children}
-    </section>
-  )
-}
+          if (redirectTo) {
+            window.location.href = redirectTo;
+          } else {
+            setError('Redirect URL is missing');
+          }
+      
+    }catch(error) {
+
+        if (axios.isAxiosError(error) && error.response) {
+          
+            const errorMessage = error.response.data?.error || `Error during ${name} authorization`;
+            console.error(`Error during ${name} authorization:`, errorMessage);
+            setError(errorMessage)
+          } else {
+            setError(`Error during ${name} authorization`)
+            console.error(`Error during ${name} authorization:`, error);
+          }
+    } finally{
+        setIsPending(false);
+    }
+  }
+  if (error) {
+    throw new Error(error);
+  }
+
+    return (
+      <section className="w-full px-[5%] min-h-dvh pt-4 flex flex-col gap-4 items-center justify-center">
+        <ModeToggle />
+        <h2
+          className={`font-semibold text-2xl w-full  lg:w-3/4 ${bodoni.className} text-center`}
+        >
+          You need to be logged in to view this content. Please log in to your
+          account to continue.
+        </h2>
+
+        {isPending ? (
+          <Button disabled size="lg">
+            <MiniLoader />
+          </Button>
+        ) : (
+          <Button className="flex items-center " onClick={authenticateUser} disabled={false}>
+            Login with {name} {icon}
+          </Button>
+        )}
+      </section>
+    );
+};
