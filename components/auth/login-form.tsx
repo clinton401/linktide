@@ -67,6 +67,7 @@ export const LoginForm: FC = () => {
         push(redirectUrl)
       }
      }catch(error) {
+      console.error(error)
       setSuccess(undefined);
       setError("An unexpected error occurred.");
       console.error(error)

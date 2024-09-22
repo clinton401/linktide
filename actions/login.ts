@@ -132,45 +132,48 @@ export const login = async (
         isTwoFA: false,
       };
     }
-    const found2fa = await findOne2fa({ userEmail: lowercaseEmail });
-    if (!found2fa)
-      return {
-        error: "User not found. Check email and try again",
-        success: undefined,
-        redirectUrl: undefined,
-        isTwoFA: false,
-      };
-    const expiresAtDate = found2fa?.expiresAt
-      ? new Date(found2fa.expiresAt)
-      : null;
-    const hasExpired =
-      expiresAtDate && !isNaN(expiresAtDate.getTime())
-        ? expiresAtDate < new Date()
-        : false;
-    if (hasExpired)
-      return {
-        error: "Code has expired, generate a new one",
-        success: undefined,
-        redirectUrl: undefined,
-        isTwoFA: false,
-      };
-
-    const isCodeValid = twoFA?.toUpperCase() === found2fa.code;
-    if (!isCodeValid)
-      return {
-        error: "Invalid Two-Factor Authentication code",
-        success: undefined,
-        redirectUrl: undefined,
-        isTwoFA: false,
-      };
-    const deletedUser = await TwoFA.findByIdAndDelete(found2fa._id);
-    if (!deletedUser)
-      return {
-        error: "Something went wrong",
-        success: undefined,
-        redirectUrl: undefined,
-        isTwoFA: false,
-      };
+    if(is2FAActive && is2FA ) {
+      const found2fa = await findOne2fa({ userEmail: lowercaseEmail });
+      if (!found2fa)
+        return {
+          error: "User not found. Check email and try again",
+          success: undefined,
+          redirectUrl: undefined,
+          isTwoFA: false,
+        };
+      const expiresAtDate = found2fa?.expiresAt
+        ? new Date(found2fa.expiresAt)
+        : null;
+      const hasExpired =
+        expiresAtDate && !isNaN(expiresAtDate.getTime())
+          ? expiresAtDate < new Date()
+          : false;
+      if (hasExpired)
+        return {
+          error: "Code has expired, generate a new one",
+          success: undefined,
+          redirectUrl: undefined,
+          isTwoFA: false,
+        };
+  
+      const isCodeValid = twoFA?.toUpperCase() === found2fa.code;
+      if (!isCodeValid)
+        return {
+          error: "Invalid Two-Factor Authentication code",
+          success: undefined,
+          redirectUrl: undefined,
+          isTwoFA: false,
+        };
+      const deletedUser = await TwoFA.findByIdAndDelete(found2fa._id);
+      if (!deletedUser)
+        return {
+          error: "Something went wrong",
+          success: undefined,
+          redirectUrl: undefined,
+          isTwoFA: false,
+        };
+    }
+    
     const result = await signIn("credentials", {
       email: lowercaseEmail,
       password,
@@ -194,7 +197,7 @@ export const login = async (
       isTwoFA: false,
     };
   } catch (error) {
-    console.error(error);
+    console.error(`Errror while signing in: ${error}`);
     if (error instanceof AuthError) {
       switch (error.type) {
         case "CredentialsSignin":
