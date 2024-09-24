@@ -27,7 +27,7 @@ const TwitterPage: FC = async () => {
       <h1 className={`  text-center  text-3xl font-black`}>
         User data and analytics are currently unavailable. However, you can
         still create and share posts through our platform. Navigate to the
-        "Create Post" section, or click the button below to get started.
+        Create Post section, or click the button below to get started.
       </h1>
       <div className="w-full flex items-center justify-center">
         <Button asChild size="lg">

@@ -4,7 +4,6 @@ import axios from "axios";
 import { getServerUser } from "@/hooks/get-server-user";
 import { findOne } from "@/data/users-data";
 import type { ISocial } from "@/models/social-media-schema";
-import { oauth } from "@/lib/oauth-twitter-client";
 import TwitterOauthToken from "@/models/twitter-oauth-token-schema";
 
 import { TwitterApi } from 'twitter-api-v2';

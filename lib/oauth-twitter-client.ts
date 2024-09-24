@@ -2,7 +2,7 @@
 import { OAuth } from 'oauth';
 import axios from 'axios';
 
-const bearerToken = process.env.TWITTER_BEARER_TOKEN!; // Add your bearer token here
+
 
 export const fetchTwitterData = async (url: string, accessToken: string) => {
   try {

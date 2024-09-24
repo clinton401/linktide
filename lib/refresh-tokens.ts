@@ -3,7 +3,7 @@ import axios from "axios";
 import { findOne } from "@/data/users-data";
 import type { ISocial } from "@/models/social-media-schema";
 
-const getNewTiktokAccessToken = async (
+export const getNewTiktokAccessToken = async (
   REFRESH_TOKEN: string,
   email: string
 ): Promise<string | undefined> => {
