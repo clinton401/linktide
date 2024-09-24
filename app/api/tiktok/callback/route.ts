@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
         },
       }
     );
-    const data = tokenResponse.data?.data;
+    const data = tokenResponse.data;
 console.log(data)
     if (!data) {
       return NextResponse.redirect(
