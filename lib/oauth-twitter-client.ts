@@ -1,26 +1,8 @@
 
 import { OAuth } from 'oauth';
-import axios from 'axios';
 
 
 
-export const fetchTwitterData = async (url: string, accessToken: string) => {
-  try {
-    const response = await axios.get(url, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-    return response.data;
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error('Error fetching Twitter data:', (error as any)?.response?.data || error.message);
-    } else {
-      console.error('Unknown error occurred');
-    }
-    throw error; // Rethrow the error after logging
-  }
-};
 
 export const oauth = new OAuth(
   "https://api.twitter.com/oauth/request_token",
