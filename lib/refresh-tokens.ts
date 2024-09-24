@@ -35,7 +35,7 @@ export const getNewTiktokAccessToken = async (
       },
     });
 
-    const data = tokenResponse.data?.data; 
+    const data = tokenResponse.data; 
 
     if (!data) {
       console.error("No data received from TikTok API.");
