@@ -1,7 +1,7 @@
 import { Error as MongooseErrorBase } from 'mongoose';
 import crypto, { randomBytes } from "crypto";
 import { v4 as uuidv4 } from 'uuid';
-
+import CryptoJS from 'crypto-js';
 interface ValidationErrorDetails {
     [key: string]: {
         properties: {
@@ -66,7 +66,32 @@ const generateRandomState = (length = 16) => {
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
     return { state, expiresAt };
 };
+const isExpired = () => {
+
+}
+function generateRandomString(length: number): string {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
+  
+  function generateCodeChallenge(codeVerifier: string): string {
+    // Generate the SHA-256 hash and convert it to a hex string
+    const codeChallenge = CryptoJS.SHA256(codeVerifier).toString(CryptoJS.enc.Hex);
+    return codeChallenge;
+  }
+  
+  // Example usage
+  const codeVerifier = generateRandomString(128);
+  const codeChallenge = generateCodeChallenge(codeVerifier);
+  
+  
+  
 
 export {
-    mongooseError, otpGenerator, idGenerator, generateRandomState
+    mongooseError, otpGenerator, idGenerator, generateRandomState, isExpired, codeChallenge
 };

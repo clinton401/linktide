@@ -7,11 +7,18 @@ import type { ISocial } from "@/models/social-media-schema";
 import { oauth } from "@/lib/oauth-twitter-client";
 import TwitterOauthToken from "@/models/twitter-oauth-token-schema";
 
+import { TwitterApi } from 'twitter-api-v2';
 export async function GET(request: NextRequest) {
+  const {TWITTER_API_KEY: CONSUMER_KEY, TWITTER_API_SECRET_KEY: CONSUMER_SECRET } = process.env;
   const url = new URL(request.url);
   const oauthToken = url.searchParams.get("oauth_token");
   const oauthVerifier = url.searchParams.get("oauth_verifier");
 
+  if (!CONSUMER_KEY || !CONSUMER_SECRET ) {
+    return NextResponse.redirect(
+      new URL(`/analytics/linkedin?error=${encodeURIComponent("API KEY and SECRET are required")}`, request.url)
+    );
+  }
   if (!oauthToken || !oauthVerifier) {
     return NextResponse.redirect(
       new URL(
@@ -26,7 +33,7 @@ export async function GET(request: NextRequest) {
   try {
     await connectToDatabase();
 
-    const tokenRecord = await TwitterOauthToken.findOne({ oauthToken });
+    const tokenRecord = await TwitterOauthToken.findOne({ oauthToken, expiresAt: { $gte: new Date() } });
     if (!tokenRecord) {
       return NextResponse.redirect(
         new URL(
@@ -37,25 +44,19 @@ export async function GET(request: NextRequest) {
         )
       );
     }
+   
     const { oauthTokenSecret } = tokenRecord;
-
-    const { accessToken, accessTokenSecret } = await new Promise<{
-      accessToken: string;
-      accessTokenSecret: string;
-    }>((resolve, reject) => {
-      oauth.getOAuthAccessToken(
-        oauthToken,
-        oauthTokenSecret,
-        oauthVerifier,
-        (error, accessToken, accessTokenSecret) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve({ accessToken, accessTokenSecret });
-          }
-        }
-      );
+    const client = new TwitterApi({
+      appKey: CONSUMER_KEY,
+      appSecret: CONSUMER_SECRET,
+      accessToken: oauthToken,
+      accessSecret: oauthTokenSecret,
     });
+    const { client: loggedClient, accessToken, accessSecret : accessTokenSecret } = await client.login(oauthVerifier);
+    const userInfo = await loggedClient.v2.me();
+const userId = userInfo.data.id;
+
+   console.log(accessTokenSecret)
 
     const expiresAt = Date.now() + 6 * 30 * 24 * 60 * 60 * 1000;
 
@@ -71,7 +72,7 @@ export async function GET(request: NextRequest) {
     });
     if (!user) {
       return NextResponse.redirect(
-        new URL(`/analytics/twitter?error=Unable to find user`, request.url)
+        new URL(`/analytics/twitter?error=${encodeURIComponent('Unable to find user')}`, request.url)
       );
     }
 
@@ -83,6 +84,7 @@ export async function GET(request: NextRequest) {
       platform.expiresAt = expiresAt;
       platform.refreshToken = accessTokenSecret;
       platform.refreshTokenExpiresAt = refreshTokenExpiresAt;
+      platform.userId = userId;
     } else {
       user.socialMedia?.push({
         name: "twitter",
@@ -90,7 +92,7 @@ export async function GET(request: NextRequest) {
         expiresAt,
         refreshToken: accessTokenSecret,
         refreshTokenExpiresAt,
-        userId: undefined,
+        userId
       });
     }
     await TwitterOauthToken.findOneAndDelete({ oauthToken });
@@ -111,7 +113,7 @@ export async function GET(request: NextRequest) {
       );
     } else {
       return NextResponse.redirect(
-        new URL(`/analytics/twitter?error=Internal Server Error`, request.url)
+        new URL(`/analytics/twitter?error=${encodeURIComponent('Internal Server Error')}`, request.url)
       );
     }
   }

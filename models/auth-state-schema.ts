@@ -7,12 +7,12 @@ interface IAuthState extends Document {
 
 const AuthStateSchema = new Schema<IAuthState>({
     state: {
-        type: String,
+        type: Schema.Types.String,
         required: true,
         unique: true,
     },
     expiresAt: {
-        type: Date,
+        type: Schema.Types.Date,
         required: true,
     },
 }, { collection: 'auth-state' });
