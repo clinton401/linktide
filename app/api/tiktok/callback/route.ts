@@ -48,6 +48,10 @@ export async function GET(request: NextRequest) {
         new URL(`/analytics/tiktok?error=${encodeURIComponent("Invalid or expired state")}`, request.url)
       );
     }
+    const codeChallenge = authState?.codeChallenge;
+    if(!codeChallenge)return NextResponse.redirect(
+      new URL(`/analytics/tiktok?error=${encodeURIComponent("No code verifier available")}`, request.url)
+    );
 
     await AuthState.findOneAndDelete({ state });
 
@@ -57,6 +61,7 @@ export async function GET(request: NextRequest) {
       code,
       grant_type: "authorization_code",
       redirect_uri: REDIRECT_URI!,
+      code_verifier: codeChallenge,
     }).toString();
     const tokenResponse = await axios.post(
       authorizationUrl,

@@ -3,6 +3,7 @@ import { Document, model, models, Schema } from "mongoose";
 interface IAuthState extends Document {
     state: string;
     expiresAt: Date;
+    codeChallenge?: string;
 }
 
 const AuthStateSchema = new Schema<IAuthState>({
@@ -14,6 +15,10 @@ const AuthStateSchema = new Schema<IAuthState>({
     expiresAt: {
         type: Schema.Types.Date,
         required: true,
+    },
+    codeChallenge: {
+        type: Schema.Types.String,
+        default: null
     },
 }, { collection: 'auth-state' });
 

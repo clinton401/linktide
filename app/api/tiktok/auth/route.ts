@@ -22,7 +22,8 @@ export async function GET() {
     await AuthState.findOneAndUpdate(
       { state },  
       {   
-        expiresAt, 
+        expiresAt,
+        codeChallenge 
       },
       { 
         new: true,  
