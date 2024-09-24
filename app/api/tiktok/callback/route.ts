@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
   const error = url.searchParams.get("error");
   const error_description = url.searchParams.get("error_description")
   const REDIRECT_URI = process.env.TIKTOK_REDIRECT_URI || "http://localhost:3000/api/tiktok/callback";
-  const authorizationUrl = `https://open.tiktokapis.com/v2/oauth/token`;
+  const authorizationUrl = `https://open.tiktokapis.com/v2/oauth/token/`;
 
   if (!CLIENT_ID || !CLIENT_SECRET ) {
     return NextResponse.redirect(
