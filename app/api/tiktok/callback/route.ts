@@ -77,7 +77,7 @@ console.log(data)
     if (!data) {
       return NextResponse.redirect(
         new URL(
-          `/analytics/tiktok?error=${encodeURIComponent(data.error_description || "Unable to sign in to tiktok")}`,
+          `/analytics/tiktok?error=${encodeURIComponent("Unable to sign in to tiktok")}`,
           request.url
         )
       );
