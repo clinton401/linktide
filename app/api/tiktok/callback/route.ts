@@ -54,10 +54,9 @@ export async function GET(request: NextRequest) {
     const params = new URLSearchParams({
       client_key: CLIENT_ID!,
       client_secret: CLIENT_SECRET!,
-      code: encodeURIComponent(code),
+      code,
       grant_type: "authorization_code",
       redirect_uri: REDIRECT_URI!,
-   
     }).toString();
     const tokenResponse = await axios.post(
       authorizationUrl,
