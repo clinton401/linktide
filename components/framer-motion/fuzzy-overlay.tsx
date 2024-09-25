@@ -2,11 +2,13 @@
 import { FC } from "react";
 import { motion } from "framer-motion";
 import { usePathname } from 'next/navigation';
-
+import {
+  publicRoutes
+} from "@/routes";
 export const FuzzyOverlay: FC = () => {
   const pathname = usePathname();
-
-  if (pathname !== "/" && !pathname.startsWith("/auth")) return null;
+  const isPublicRoute = publicRoutes.includes(pathname);
+  if (!isPublicRoute  && !pathname.startsWith("/auth")) return null;
 
   return (
     <motion.div

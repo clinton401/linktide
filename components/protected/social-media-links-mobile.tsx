@@ -20,7 +20,7 @@ const navMenuAnimation = {
         transition: {
             duration: 0.5,
             // delay: 0.5,
-            staggerChildren: 0.5,
+            staggerChildren: 0.3,
             mass: 0.4,
             damping: 8,
             when: "beforeChildren",

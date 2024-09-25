@@ -13,7 +13,7 @@ export async function GET() {
   if (!REDIRECT_URI) {
     return NextResponse.json({ error: 'Redirect URI is not defined' }, { status: 500 });
   }
-  const authorizationUrl = `https://www.tiktok.com/v2/auth/authorize/?client_key=${encodeURIComponent(CLIENT_ID)}&response_type=code&scope=user.info.profile,user.info.basic,user.info.stats,video.upload&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&state=${state}&code_challenge=${codeChallenge}&code_challenge_method=S256`;
+  const authorizationUrl = `https://www.tiktok.com/v2/auth/authorize/?client_key=${encodeURIComponent(CLIENT_ID)}&response_type=code&scope=user.info.profile,user.info.basic,user.info.stats,video.upload,video.publish&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&state=${state}&code_challenge=${codeChallenge}&code_challenge_method=S256`;
   
   
  

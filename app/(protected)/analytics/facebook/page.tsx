@@ -1,6 +1,11 @@
 import { FC } from "react";
 
 import { bodoni } from "@/lib/fonts";
+export const metadata = {
+  title: 'Facebook Analytics Overview',
+  description: "Get a quick look at your Facebook analytics and user data through Linktide. Access essential insights into post performance and engagement.",
+};
+
 const FacebookPage: FC = () => {
   return (
     <section className="w-full px-[5%] pt-6 md:pt-4  flex items-center min-h-dvh justify-center gap-6 flex-col">

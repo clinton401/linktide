@@ -5,6 +5,11 @@ import { bodoni } from "@/lib/fonts";
 import { getSocialAuthState } from "@/hooks/get-social-auth-state";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+export const metadata = {
+  title: 'Twitter Analytics Overview',
+  description: "See a summary of your Twitter analytics and user data on Linktide. Track basic metrics like tweet performance and follower changes.",
+};
+
 const TwitterPage: FC = async () => {
   const isAuth = await getSocialAuthState("twitter");
   if (!isAuth) {

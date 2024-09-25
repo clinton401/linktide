@@ -13,6 +13,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+export const metadata = {
+  title: 'LinkedIn Analytics Overview',
+  description: "Access key insights into your LinkedIn activity with Linktide. View limited analytics and user data on post performance and engagement.",
+};
+
 const LinkedInPage: FC = async () => {
   const isAuth = await getSocialAuthState("linkedin");
   if (!isAuth) {
