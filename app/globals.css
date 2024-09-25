@@ -185,7 +185,17 @@ body {
 .desktop_header:hover .link_text {
   width: 100%;
 }
-/* From Uiverse.io by fanishah */ 
+.social_links_mobile {
+  background: hsl(var(--background));
+-webkit-backdrop-filter: blur(2px);
+backdrop-filter: blur(2px);
+border: 1px solid hsl(var(--background));
+}
+#ham .hamburger-react {
+  height: auto;
+  width: auto
+}
+
 .loader {
   display: block;
   width: 150px;

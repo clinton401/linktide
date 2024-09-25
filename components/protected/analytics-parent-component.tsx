@@ -54,7 +54,7 @@ export const AnalyticsParentComponent: FC<AnalyticsProps> = ({
   }
 
     return (
-      <section className="w-full px-[5%] min-h-dvh pt-4 flex flex-col gap-4 items-center justify-center">
+      <section className="w-full px-[5%] min-h-dvh pt-6 md:pt-4 flex flex-col gap-4 items-center justify-center">
         <ModeToggle />
         <h2
           className={`font-semibold text-2xl w-full  lg:w-3/4 ${bodoni.className} text-center`}

@@ -1,11 +1,18 @@
 import { FC } from "react";
 import { AnalyticsParentComponent } from "@/components/protected/analytics-parent-component";
 import { SlSocialLinkedin } from "react-icons/sl";
-import { bodoni } from "@/lib/fonts"
+import { bodoni } from "@/lib/fonts";
 import { getSocialAuthState } from "@/hooks/get-social-auth-state";
 import { linkedinData } from "@/actions/linkedin-data";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { FaUser } from "react-icons/fa";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 const LinkedInPage: FC = async () => {
   const isAuth = await getSocialAuthState("linkedin");
   if (!isAuth) {
@@ -25,23 +32,33 @@ const LinkedInPage: FC = async () => {
     throw new Error(error || "Unable to retrieve user data");
   }
   return (
-    <section className="w-full px-[5%] min-h-dvh pt-4  space-y-6">
+    <section className="w-full px-[5%] min-h-dvh pt-6 md:pt-4 space-y-8">
       <h2
         className={` ${bodoni.className} text-xl font-black w-full text-left `}
       >
         Analytics / Linkedin
       </h2>
       <section className="w-full flex-col-reverse gap-y-6 md:flex-row flex items-center justify-center ">
-        <ul className="flex  flex-col justify-center w-full md:w-1/2 gap-4">
-          <li>Name: {data.name}</li>
-          {data?.email && <li>Email: {data.email}</li>}
-          {data?.email_verified === false && (
-            <li>
-              Your LinkedIn email is unverified. Please visit LinkedIn to verify
-              it and ensure full access to services. Thank you!
-            </li>
-          )}
-        </ul>
+        <Card className="w-full md:w-1/2  max-w-[350px]">
+          <CardHeader className="flex flex-col *:text-center items-center justify-center ">
+            <CardTitle
+              className={`font-black flex items-center justify-center  ${bodoni.className} text-3xl`}
+            >
+              {data.name}
+            </CardTitle>
+            <CardDescription>{data.email}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {data?.email_verified === false && (
+              <p className="">
+                {" "}
+                Your LinkedIn email is unverified. Please visit LinkedIn to
+                verify it and ensure full access to services. Thank you!
+              </p>
+            )}{" "}
+          </CardContent>
+        </Card>
+       
         <div className="w-full md:w-1/2 flex items-center justify-center">
           <Avatar className="w-[100px] h-[100px]">
             <AvatarImage
@@ -54,7 +71,7 @@ const LinkedInPage: FC = async () => {
           </Avatar>
         </div>
       </section>
-      <h1 className={`  pt-[50px] text-3xl font-black w-full text-center `}>
+      <h1 className={`   text-3xl font-black w-full text-center `}>
         LinkedIn does not provide additional analytics data at the moment. These
         are the only metrics available for now. Thank you for your
         understanding!

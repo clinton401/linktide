@@ -19,7 +19,7 @@ export const Navbar: FC = () => {
 
   return (
     <header>
-      <nav className="fixed z-20 text-gray-300 hidden w-[75px] hover:w-[200px] py-4 px-4 transition-all ease-linear duration-300 md:flex flex-col gap-y-12 min-h-dvh bg-primary desktop_header left-0 top-0">
+      <nav className="fixed z-30 text-gray-300 hidden w-[75px] hover:w-[200px] py-4 px-4 transition-all ease-linear duration-300 md:flex flex-col gap-y-12 min-h-dvh bg-primary desktop_header left-0 top-0">
         <div className="flex w-[44px] flex-col items-center justify-center">
           <Avatar>
             <AvatarImage src={user?.image || ""} alt={`${user?.name || "User"} image`} />
@@ -28,7 +28,7 @@ export const Navbar: FC = () => {
           <h3 className="truncate text-sm">Clinton</h3>
         </div>
         <section className="w-full flex-col *:flex overflow-x-hidden *:items-end flex gap-y-6">
-          <Link href="/analytics/facebook">
+          <Link href="/analytics/tiktok">
             {pathname.startsWith("/analytics") ? (
               <MdDashboard className="text-2xl text-white min-w-[26px]" />
             ) : (
@@ -63,7 +63,7 @@ export const Navbar: FC = () => {
       <nav className="flex md:hidden w-full fixed max-h-[65px] left-0 bottom-0 p-4 bg-background border-t">
         <ul className="items-center flex gap-x-2 w-full justify-evenly">
           <li>
-            <Link href="/analytics/facebook">
+            <Link href="/analytics/tiktok">
               {pathname.startsWith("/analytics") ? (
                 <MdDashboard className="text-2xl text-foreground" />
               ) : (

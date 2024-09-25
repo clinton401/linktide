@@ -36,7 +36,6 @@ export const linkedinData = async (): Promise<{
 
   //   const url = "https://api.linkedin.com/v2/me";
   const url = "https://api.linkedin.com/v2/userinfo";
-console.log('testing')
   try {
     await connectToDatabase();
     const response = await axios.get(url, {

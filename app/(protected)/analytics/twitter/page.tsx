@@ -18,7 +18,7 @@ const TwitterPage: FC = async () => {
   }
 
   return (
-    <section className="w-full px-[5%] min-h-dvh pt-4  space-y-6">
+    <section className="w-full px-[5%] min-h-dvh pt-6 md:pt-4 space-y-8">
       <h2
         className={` ${bodoni.className} text-xl font-black w-full text-left `}
       >

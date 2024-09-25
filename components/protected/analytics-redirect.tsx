@@ -6,7 +6,7 @@ export const AnalyticsRedirect:FC = () => {
     const router = useRouter();
 
   useEffect(() => {
-    router.push('/analytics/facebook');  
+    router.push('/analytics/tiktok');  
   }, [router]);
   return (
     <LoaderParentComponent/>
