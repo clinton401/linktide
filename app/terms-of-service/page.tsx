@@ -1,6 +1,7 @@
 import React from 'react';
-import Link from "next/link"
+import Link from "next/link";
 import { FuzzyOverlay } from "@/components/framer-motion/fuzzy-overlay";
+
 export default function TermsOfService() {
     return (
         <div className="container text-white relative overflow-hidden mx-auto px-4 py-10">
@@ -31,7 +32,7 @@ export default function TermsOfService() {
             <section className="mb-8">
                 <h2 className="text-2xl font-semibold mb-4">4. Data and Privacy</h2>
                 <p className="text-base leading-relaxed">
-                    Your use of Linktide is subject to our <Link  href="/policy" className="mx-1 underline">Privacy Policy</Link>. By using the platform, you agree to the terms outlined in our Privacy Policy, including how we collect, store, and use your data.
+                    Your use of Linktide is subject to our <Link href="/policy" className="mx-1 underline">Privacy Policy</Link>. By using the platform, you agree to the terms outlined in our Privacy Policy, including how we collect, store, and use your data.
                 </p>
             </section>
 
@@ -45,7 +46,7 @@ export default function TermsOfService() {
             <section className="mb-8">
                 <h2 className="text-2xl font-semibold mb-4">6. Limitation of Liability</h2>
                 <p className="text-base leading-relaxed">
-                    Linktide is provided on an "as is" and "as available" basis. We do not guarantee uninterrupted or error-free use of our platform. Linktide is not liable for any indirect, incidental, or consequential damages arising from your use of the platform.
+                    Linktide is provided on an &quot;as is&quot; and &quot;as available&quot; basis. We do not guarantee uninterrupted or error-free use of our platform. Linktide is not liable for any indirect, incidental, or consequential damages arising from your use of the platform.
                 </p>
             </section>
 
@@ -60,10 +61,10 @@ export default function TermsOfService() {
                 <h2 className="text-2xl font-semibold mb-4">8. Contact Us</h2>
                 <p className="text-base leading-relaxed">
                     If you have any questions or concerns about these terms, please contact us at 
-                    <Link  href="mailto:clintonphillips464@gmail.com" className="underline ml-1">clintonphillips464@gmail.com</Link>.
+                    <Link href="mailto:clintonphillips464@gmail.com" className="underline ml-1">clintonphillips464@gmail.com</Link>.
                 </p>
             </section>
-            <FuzzyOverlay/>
+            <FuzzyOverlay />
         </div>
     );
 }
