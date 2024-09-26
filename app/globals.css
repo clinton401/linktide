@@ -195,7 +195,9 @@ border: 1px solid hsl(var(--background));
   height: auto;
   width: auto
 }
-
+.post_section {
+  min-height: auto;
+}
 .loader {
   display: block;
   width: 150px;
@@ -467,5 +469,12 @@ border: 1px solid hsl(var(--background));
   to {
     stroke-dashoffset: -56.549;
     transform: rotate(1turn);
+  }
+}
+
+
+@media screen and (min-width: 768px) {
+  .post_section {
+    min-height: calc(100dvh - 70px);
   }
 }

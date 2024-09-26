@@ -1,9 +1,10 @@
 import { FC } from "react";
-// import { LoaderParentComponent } from "@/components/loader-parent-component";
+import {CreatePostUI} from "@/components/protected/create-post-ui"
 const CreatePostPage: FC = () => {
   return (
-    <div className="w-full min-h-dvh px-[5%] border">
-
+    <div className="w-full flex flex-wrap gap-x-4 md:gap-x-0 justify-center    ">
+      
+     <CreatePostUI/>
     </div>
   );
 };

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import { Oswald } from "next/font/google";
-
+import { Toaster } from "@/components/ui/toaster"
 import {auth} from "@/auth";
 const oswald = Oswald({ subsets: ["latin"], weight: ["300" , "400" , "500" , "600" , "700" ] });
 
@@ -31,15 +31,9 @@ export default async function RootLayout({
         className={`${oswald.className}  antialiased`}
         id="body"
       >
-          {/* <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          > */}
+          
             {children}
-          {/* </ThemeProvider> */}
-       
+          <Toaster />
        
     
       </body>
