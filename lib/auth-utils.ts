@@ -2,6 +2,7 @@ import { Error as MongooseErrorBase } from 'mongoose';
 import crypto, { randomBytes } from "crypto";
 import { v4 as uuidv4 } from 'uuid';
 import CryptoJS from 'crypto-js';
+import type { ISocial } from '@/models/social-media-schema';
 interface ValidationErrorDetails {
     [key: string]: {
         properties: {
@@ -90,8 +91,23 @@ function generateRandomString(length: number): string {
   const codeChallenge = generateCodeChallenge(codeVerifier);
   
   
-  
+  const isStillAuth = (socialMediaDetails: ISocial) => {
+    const accessExpire = socialMediaDetails.expiresAt;
+  const refreshExpire = socialMediaDetails.refreshTokenExpiresAt;
+  let accessToken = socialMediaDetails.accessToken;
+  const refreshToken = socialMediaDetails.refreshToken;
+
+  const now = new Date();
+  const isRefreshExpired = refreshToken && refreshExpire
+    ? now > new Date(refreshExpire)
+    : true;
+  const isAccessExpired = accessToken && accessExpire
+    ? now > new Date(accessExpire)
+    : true;
+    return {isAccessExpired, isRefreshExpired, refreshToken, accessToken};
+  }
 
 export {
-    mongooseError, otpGenerator, idGenerator, generateRandomState, isExpired, codeChallenge
+    mongooseError, otpGenerator, idGenerator, generateRandomState, isExpired, codeChallenge,
+    isStillAuth
 };

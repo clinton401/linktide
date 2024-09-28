@@ -1,5 +1,5 @@
 "use client";
-import { FC, useState, useEffect } from "react";
+import { FC, useState, useEffect, useRef } from "react";
 import { CiFileOn, CiImageOn } from "react-icons/ci";
 import { motion } from "framer-motion";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,10 +17,15 @@ import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useRouter } from "next/navigation";
 import type { ISocial } from "@/models/social-media-schema";
-  import {DiscardAlert} from "@/components/protected/discard-alert"
-  import { Badge } from "@/components/ui/badge"
-  import { useToast } from "@/hooks/use-toast";
-  import Link from "next/link"
+import { DiscardAlert } from "@/components/protected/discard-alert";
+import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
+import Link from "next/link";
+import { Switch } from "@/components/ui/switch";
+import { Images } from "@/components/images";
+// import { createPostAction } from "@/actions/create-post-action";
+import { MiniLoader } from "@/components/mini-loader";
+import axios from "axios";
 type Checked = DropdownMenuCheckboxItemProps["checked"];
 const sectionAnimation = {
   hidden: {
@@ -58,10 +63,18 @@ export const CreatePostUI: FC = () => {
   const [video, setVideo] = useState<undefined | File>(undefined);
   const [isReadyToPost, setIsReadyToPost] = useState(false);
   const [isReadyToDiscard, setIsReadyToDiscard] = useState(false);
+  const [isVideoChosen, setIsVideoChosen] = useState(false);
   const [postText, setPostText] = useState("");
+  const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([]);
+  const [videoPreviewUrl, setVideoPreviewUrl] = useState<string | undefined>(
+    undefined
+  );
+  const [isPostLoading, setIsPostLoading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const videoFileInputRef = useRef<HTMLInputElement>(null);
   const session = useCurrentUser();
   const { push } = useRouter();
-  const { toast } = useToast()
+  const { toast } = useToast();
   useEffect(() => {
     if (!video && imagesArray.length < 1 && postText.length < 1) {
       setIsReadyToDiscard(false);
@@ -95,7 +108,15 @@ export const CreatePostUI: FC = () => {
     showInstagram,
     postText,
   ]);
-
+  useEffect(() => {
+    if (isVideoChosen) {
+      setImagePreviewUrls([]);
+      setImagesArray([]);
+    } else {
+      setVideo(undefined);
+      setVideoPreviewUrl(undefined);
+    }
+  }, [isVideoChosen]);
   if (!session) {
     push("/auth/login");
     return;
@@ -111,22 +132,185 @@ export const CreatePostUI: FC = () => {
     return socialMedia.find((social) => social.name === name);
   };
   const textAreaHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if(showTwitter && e.target.value.length > 120) {
-        toast({
-            variant: "destructive",
-            title: "Uh oh! Something went wrong.",
-            description: "Your post must be 280 characters or less.",
-           
-          })
-
+    if (showTwitter && e.target.value.length > 120) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "Your post must be 280 characters or less.",
+      });
     } else {
-    setPostText(e.target.value);}
+      setPostText(e.target.value);
+    }
   };
-  const discardHandler=()=> {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+
+    const selectedFiles = Array.from(e.target.files);
+    for (const selectedFile of selectedFiles) {
+      if (!selectedFile.type.startsWith("image/")) {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: "Please select only image files.",
+        });
+        return;
+      }
+    }
+    if (selectedFiles.length + imagesArray.length > 4) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "You can only upload up to 4 images.",
+      });
+      return;
+    }
+
+    setImagesArray((prev) => [...prev, ...selectedFiles]);
+    const newPreviews = selectedFiles.map((file) => URL.createObjectURL(file));
+    setImagePreviewUrls((prev) => [...prev, ...newPreviews]);
+  };
+  const handleVideoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+  
+    const selectedVideo = e.target.files[0];
+  
+    if (!selectedVideo.type.startsWith("video/")) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "Please select a video file.",
+      });
+      return;
+    }
+  
+    const maxSizeInBytes = 500 * 1024 * 1024; 
+    if (selectedVideo.size > maxSizeInBytes) {
+      toast({
+        variant: "destructive",
+        title: "File too large.",
+        description: "The video must be less than 500 MB.",
+      });
+      return;
+    }
+  
+    setVideo(selectedVideo);
+    const previewUrl = URL.createObjectURL(selectedVideo);
+    
+    const videoElement = document.createElement("video");
+    videoElement.src = previewUrl;
+  
+    videoElement.onloadedmetadata = () => {
+      const duration = videoElement.duration; 
+      const twitterMax = 140;
+      const normalMax = 600; 
+  
+      const isTwitterLimitPassed = showTwitter && duration > twitterMax;
+      const isNormalLimitPassed = duration > normalMax;
+  
+      if (isTwitterLimitPassed) {
+        toast({
+          variant: "destructive",
+          title: "Video too long.",
+          description: "Twitter videos must be less than 2 minutes and 20 seconds (140 seconds).",
+        });
+        resetVideoState(); 
+        return;
+      } else if (isNormalLimitPassed) {
+        toast({
+          variant: "destructive",
+          title: "Video too long.",
+          description: "The video must be less than 10 minutes.",
+        });
+        resetVideoState();
+        return;
+      }
+  
+      
+    };
+  
+    setVideoPreviewUrl(previewUrl);
+    return () => {
+      URL.revokeObjectURL(previewUrl);
+    };
+  };
+  
+  const resetVideoState = () => {
     setVideo(undefined);
-    setImagesArray([]);
-    setPostText("")
+    setVideoPreviewUrl(undefined);
   }
+  const fileUploadButton = () => {
+    fileInputRef.current?.click();
+  };
+  const videoFileUploadButton = () => {
+    videoFileInputRef.current?.click();
+  };
+  const switchHandler = () => {
+    setIsVideoChosen(!isVideoChosen);
+  };
+  const discardHandler = () => {
+    setVideo(undefined);
+    setShowTiktok(undefined);
+    setShowLinkedin(undefined);
+    setShowTwitter(undefined);
+    setShowFacebook(undefined);
+    setShowInstagram(undefined);
+    setImagePreviewUrls([]);
+    setVideoPreviewUrl(undefined);
+    setImagesArray([]);
+
+    setPostText("");
+  };
+  const createPostHandler = async () => {
+    if (!isReadyToPost) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please upload at least one text, video, or image to proceed.",
+      });
+      return;
+    }
+  
+    setIsPostLoading(true);
+  
+    const postData = {
+      postText,
+      imagesArray,
+      video,
+      showTiktok,
+      showLinkedin,
+      showTwitter,
+      showFacebook,
+      showInstagram,
+    };
+  
+    try {
+      const response = await axios.post("/api/create-post", {
+        isVideoChosen,
+        postData,
+      });
+  
+      if (response.data.success) {
+        toast({
+          description: response.data.success || "Post sent successfully!",
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: response.data.error || "Unable to post, please try again.",
+        });
+      }
+    } catch (error) {
+      console.error("Error posting:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Unable to post, please try again.",
+      });
+    } finally {
+      setIsPostLoading(false);
+    }
+  };
 
   return (
     <>
@@ -152,7 +336,7 @@ export const CreatePostUI: FC = () => {
                 isImageSection ? "bg-background " : ""
               }   transition-colors duration-300 ease-in`}
             >
-              <CiImageOn className="mr-2" /> Image & Video
+              <CiImageOn className="mr-2" /> Image Or Video
             </button>
           </div>
           {isImageSection && (
@@ -162,11 +346,80 @@ export const CreatePostUI: FC = () => {
               animate={"visible"}
               exit="exit"
               key="section-animation"
-              className="w-full    flex"
+              className="w-full  flex-col gap-4 items-center justify-center  flex"
             >
-              <span className="w-full rounded-md border border-dashed min-h-[200px] flex flex-col items-center justify-center gap-4">
-                <Button variant="outline">Upload a file</Button>
-              </span>
+              <div className="w-full flex items-center  gap-2 justify-center text-xs">
+                <span>Image</span>{" "}
+                <Switch
+                  checked={isVideoChosen}
+                  onCheckedChange={switchHandler}
+                />
+                <span>Video</span>
+              </div>
+              {isVideoChosen ? (
+                <>
+                  <div className="w-full rounded-md border border-dashed min-h-[164px] flex flex-col items-center justify-center gap-2">
+                    <Button variant="outline" onClick={videoFileUploadButton}>
+                      <input
+                        type="file"
+                        accept="video/mp4"
+                        className="hidden"
+                        ref={videoFileInputRef}
+                        onChange={handleVideoFileChange}
+                      />
+                      Upload a video
+                    </Button>
+                    <p className="w-full text-center text-xs text-secondary">
+                      You an upload only one video
+                    </p>
+                  </div>
+                  {videoPreviewUrl && (
+                    <div style={{ marginTop: "10px" }}>
+                      <video
+                        src={videoPreviewUrl}
+                        controls
+                        className="w-full aspect-video object-cover"
+                      />
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  <div className="w-full rounded-md border border-dashed min-h-[164px] flex flex-col items-center justify-center gap-2">
+                    <Button variant="outline" onClick={fileUploadButton}>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        className="hidden"
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                      />
+                      Upload images
+                    </Button>
+                    <p className="w-full text-center text-xs text-secondary">
+                      You an upload up to 4 images
+                    </p>
+                  </div>
+                  {imagePreviewUrls.length > 0 && (
+                    <div className="flex w-full justify-center gap-4 items-center flex-wrap ">
+                      {imagePreviewUrls.map((image: string, index: number) => {
+                        return (
+                          <span
+                            key={index}
+                            className="w-[150px] rounded-md relative overflow-hidden aspect-square"
+                          >
+                            <Images
+                              imgSrc={image}
+                              alt={`Preview ${index + 1}`}
+                            />
+                          </span>
+                        );
+                      })}
+                    </div>
+                  )}
+                </>
+              )}
             </motion.div>
           )}
           {!isImageSection && (
@@ -249,14 +502,28 @@ export const CreatePostUI: FC = () => {
             </DropdownMenu>
           </div>
           <div className="w-full flex flex-wrap md:justify-start justify-center items-center gap-4">
-         {showTiktok && <Badge variant="outline">Tiktok</Badge>}
-         {showLinkedin && <Badge variant="outline">Linkedin</Badge>}
-         {showTwitter && <Badge variant="outline">Twitter</Badge>}
-         {showFacebook && <Badge variant="outline">Facebook</Badge>}
-         {showInstagram && <Badge variant="outline">Instagram</Badge>}
+            {showTiktok && <Badge variant="outline">Tiktok</Badge>}
+            {showLinkedin && <Badge variant="outline">Linkedin</Badge>}
+            {showTwitter && <Badge variant="outline">Twitter</Badge>}
+            {showFacebook && <Badge variant="outline">Facebook</Badge>}
+            {showInstagram && <Badge variant="outline">Instagram</Badge>}
           </div>
-          {(!getIsSocialAuth("tiktok") || !getIsSocialAuth("linkedin") || !getIsSocialAuth("twitter")) && <p className="text-sm md:text-left text-center">To post on more social media platforms, click <span><Link href="/analytics/tiktok" className="text-primary underline">here</Link></span> to authenticate your accounts.</p>}
-          
+          {(!getIsSocialAuth("tiktok") ||
+            !getIsSocialAuth("linkedin") ||
+            !getIsSocialAuth("twitter")) && (
+            <p className="text-sm md:text-left text-center">
+              To post on more social media platforms, click{" "}
+              <span>
+                <Link
+                  href="/analytics/tiktok"
+                  className="text-primary underline"
+                >
+                  here
+                </Link>
+              </span>{" "}
+              to authenticate your accounts.
+            </p>
+          )}
         </section>
       </div>
       <div
@@ -264,19 +531,22 @@ export const CreatePostUI: FC = () => {
  justify-between flex-wrap items-center md:pb-0 pb-[80px] "
       >
         <section className="w-full md:w-[65%] md:justify-start justify-center py-4 md:border-r flex ">
-            <DiscardAlert isReadyToDiscard={isReadyToDiscard} discardHandler={discardHandler}/>
-          
+          <DiscardAlert
+            isReadyToDiscard={isReadyToDiscard || isPostLoading}
+            discardHandler={discardHandler}
+          />
         </section>
         <section className="w-full md:w-[35%] md:py-4 gap-y-4 gap-x-2   flex items-center justify-center md:justify-between ">
           <Button
             variant="secondary"
             className="w-[90px]"
-            disabled={!isReadyToPost}
+            disabled={!isReadyToPost || isPostLoading}
           >
             Save draft
           </Button>
-          <Button className="w-[90px]" disabled={!isReadyToPost}>
-            Post
+          <Button className="w-[90px]" disabled={!isReadyToPost || isPostLoading} onClick={()=>createPostHandler()}>
+            {isPostLoading ? <MiniLoader/> : "Post"}
+            
           </Button>
         </section>
       </div>

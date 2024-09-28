@@ -10,13 +10,42 @@ const oswald = Oswald({ subsets: ["latin"], weight: ["300" , "400" , "500" , "60
 
 export const metadata: Metadata = {
   title: {
-    default: 'Linktide', 
-    template: '%s | Linktide', 
+    default: 'Linktide',
+    template: '%s | Linktide',
   },
-  description: '"Linktide is a powerful social media manager that lets you easily post, track analytics, and manage multiple social media accounts from one platform."',
+  description: 'Linktide is a powerful social media manager that lets you easily post, track analytics, and manage multiple social media accounts from one platform.',
   
-  // TODO: add graphql and twitter metadata 
+  openGraph: {
+    title: 'Linktide',
+    description: 'Linktide is a powerful social media manager that lets you easily post, track analytics, and manage multiple social media accounts from one platform.',
+    url: 'https://linktide.org',  // Update with your website URL
+    images: [
+      {
+        url: '/assets/website-thumbnail.png',  // Update with your image URL
+        width: 1200,
+        height: 627,
+        alt: 'Linktide Social Media Manager',
+      },
+    ],
+    type: 'website', 
+  },
+  
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Linktide',
+    description: 'Linktide helps you manage all your social media accounts from one powerful platform.',
+    images: [
+      {
+        url: '/assets/website-thumbnail.png', 
+        alt: 'Linktide Social Media Manager',
+      },
+    ],
+  },
+  
+  
+  // TODO: Add GraphQL metadata or other integrations as needed
 };
+
 
 export default async function RootLayout({
   children,

@@ -4,6 +4,7 @@ import { getSocialMediaDetails } from "@/hooks/get-social-media-details";
 import axios from "axios";
 import { getServerUser } from "@/hooks/get-server-user";
 import { getNewTiktokAccessToken } from "@/lib/refresh-tokens";
+import { isStillAuth } from "@/lib/auth-utils";
 type UserProfile = {
       avatar_url: string;
       display_name: string;
@@ -35,18 +36,10 @@ export const tiktokData = async (): Promise<{
     return { error: "User not allowed to view this resource", data: undefined };
   }
 
-  const accessExpire = socialMediaDetails.expiresAt;
-  const refreshExpire = socialMediaDetails.refreshTokenExpiresAt;
-  let accessToken = socialMediaDetails.accessToken;
-  const refreshToken = socialMediaDetails.refreshToken;
-
-  const now = new Date();
-  const isRefreshExpired = refreshToken && refreshExpire
-    ? now > new Date(refreshExpire)
-    : true;
-  const isAccessExpired = accessToken && accessExpire
-    ? now > new Date(accessExpire)
-    : true;
+  
+  const authStatus = isStillAuth(socialMediaDetails);
+  const {isAccessExpired, isRefreshExpired, refreshToken} = authStatus;
+  let {accessToken } = authStatus;
 
   if (isAccessExpired) {
     if (isRefreshExpired || !refreshToken) {
