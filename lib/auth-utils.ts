@@ -94,7 +94,7 @@ function generateRandomString(length: number): string {
   const isStillAuth = (socialMediaDetails: ISocial) => {
     const accessExpire = socialMediaDetails.expiresAt;
   const refreshExpire = socialMediaDetails.refreshTokenExpiresAt;
-  let accessToken = socialMediaDetails.accessToken;
+  const accessToken = socialMediaDetails.accessToken;
   const refreshToken = socialMediaDetails.refreshToken;
 
   const now = new Date();
