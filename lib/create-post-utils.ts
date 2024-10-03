@@ -55,18 +55,22 @@ export const uploadTiktokVideoBuffer = async (uploadUrl: string, videoBuffer: Bu
     console.log('Video upload successful:', response.data);
     return response.data;
   } catch (error: unknown) {
-    if (error.response) {
-      const apiError = error.response.data?.error;
+    // Check if the error is an Axios error
+    if (axios.isAxiosError(error)) {
+      const apiError = error.response?.data?.error;
       if (apiError && apiError.message) {
         console.error(`TikTok video upload error: ${apiError.message}`);
-        throw new Error(apiError.message); 
+        throw new Error(apiError.message);
       }
+      // Log the status code and response if available
+      console.error(`Error ${error.response?.status}:`, error.response?.data);
+    } else {
+      // Handle unexpected errors
+      console.error('Unexpected error:', error);
     }
-
-    console.error('Error during video upload:', error.message || error);
-    throw new Error(error.message || 'Unknown error occurred during video upload ');
-  }
-};
+  
+    throw new Error(error instanceof Error ? error.message : 'Unknown error occurred during video upload ');
+  }}
 export const initiateTiktokVideoUpload = async (accessToken: string, videoSize: number, description: string) => {
   let chunkSize: number;
   let totalChunkCount: number;
@@ -129,18 +133,21 @@ export const initiateTiktokVideoUpload = async (accessToken: string, videoSize: 
 
     return { upload_url: data.upload_url, publish_id: data.publish_id }; 
   } catch (error: unknown) {
-    if (error.response) {
-      const apiError = error.response.data?.error;
+    // Check if the error is an Axios error
+    if (axios.isAxiosError(error)) {
+      const apiError = error.response?.data?.error;
       if (apiError && apiError.message) {
         console.error(`TikTok API error: ${apiError.message}`);
-        throw new Error(apiError.message); 
+        throw new Error(apiError.message);
       }
+      console.error(`Error ${error.response?.status}:`, error.response?.data);
+    } else {
+      console.error('Unexpected error:', error);
     }
-
-    console.error('Error initiating video upload:', error.message || error);
-    throw new Error(error.message || 'Unknown error occurred during video upload initialization');
+  
+    throw new Error(error instanceof Error ? error.message : 'Unknown error occurred during video upload initialization');
   }
-};
+}
 
 
 
