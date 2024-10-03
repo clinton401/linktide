@@ -60,7 +60,7 @@ export const Navbar: FC = () => {
           </Link>
         </section>
       </nav>
-      <nav className="flex md:hidden w-full fixed max-h-[65px] left-0 bottom-0 p-4 bg-background border-t">
+      <nav className="flex md:hidden w-full fixed max-h-[65px] left-0 bottom-0 z-30 p-4 bg-background border-t">
         <ul className="items-center flex gap-x-2 w-full justify-evenly">
           <li>
             <Link href="/analytics/tiktok">

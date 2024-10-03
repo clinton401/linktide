@@ -55,7 +55,6 @@ export const LoginForm: FC = () => {
       setSuccess(undefined);
       const data = await login(values, redirect, is2FA);
       const {error, success, redirectUrl, isTwoFA} = data;
-    console.log(data)
         setError(error); 
     
         setSuccess(success); 

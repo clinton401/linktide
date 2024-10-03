@@ -21,6 +21,7 @@ export const metadata = {
   description: "View a snapshot of your TikTok analytics and user data with Linktide. Access basic insights into video performance and audience growth.",
 };
 
+
 const TikTokPage: FC = async () => {
   const isAuth = await getSocialAuthState("tiktok");
   if (!isAuth) {

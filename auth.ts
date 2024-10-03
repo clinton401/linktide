@@ -19,7 +19,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   callbacks: {
     async signIn({ user, account }) {
-        console.log({user, account});
         await connectToDatabase();
       if (account?.provider === "credentials") {
         const existingUser = await findOne({

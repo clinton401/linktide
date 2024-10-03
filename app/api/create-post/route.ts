@@ -1,32 +1,90 @@
 // app/api/create-post/route.ts
 import { NextResponse } from "next/server";
-import { getSocialAuthState } from "@/hooks/get-social-auth-state";
-import { getSocialMediaDetails } from "@/hooks/get-social-media-details";
 import { getServerUser } from "@/hooks/get-server-user";
-import {
-  uploadAllLinkedinMedia,
-  createLinkedinMediaPost,
-  createLinkedinTextPost,
-} from "@/lib/create-post-utils";
+import { createLinkedinPost } from "@/actions/create-linkedin-post";
+import { createTwitterPost } from "@/actions/create-twitter-post";
+import { createTiktokPost } from "@/actions/create-tiktok-post";
+
+
+const readFile = (req: Request): Promise<string> =>
+  new Promise(async (resolve, reject) => {
+    const data = await req.formData();
+    const file = data.get('file') as File | null;
+
+    if (!file) {
+      return reject('No file sent!');
+    }
+
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const content = buffer.toString('utf8');
+
+    resolve(content);
+  });
+
 
 export async function POST(req: Request) {
   try {
-    const { isVideoChosen, postData } = await req.json();
+    const data = await req.formData();
 
-    const {
-      postText,
-      imagesArray,
-      video,
-      showTiktok,
-      showLinkedin,
-      showTwitter,
-      showFacebook,
-      showInstagram,
-    } = postData;
+
+    const imagesArray: File[] = data.getAll('imagesArray') as File[];
+    const videoFile: File | null = data.get('video') as File | null;
+    const postText = data.get('postText') as string ;
+    const showTiktok = data.get('showTiktok') === 'true';
+    const showLinkedin = data.get('showLinkedin') === 'true';
+    const showTwitter = data.get('showTwitter') === 'true';
+    const showFacebook = data.get('showFacebook') === 'true';
+    const showInstagram = data.get('showInstagram') === 'true';
+    const isVideoChosen = data.get('isVideoChosen') === "true";
+    // Process images (convert each file to Buffer)
+    const imageBuffers = await Promise.all(
+      imagesArray.map(async (image) => {
+        const arrayBuffer = await image.arrayBuffer();
+        return Buffer.from(arrayBuffer);
+      })
+    );
+
+    
+    let videoBuffer: Buffer | null = null;
+    if (videoFile) {
+      const arrayBuffer = await videoFile.arrayBuffer();
+      videoBuffer = Buffer.from(arrayBuffer);
+    }
+
+
+const postData = {
+  postText,
+  imagesArray: imageBuffers,
+  video: videoBuffer,
+  showTiktok,
+  showLinkedin,
+  showTwitter,
+  showFacebook,
+  showInstagram,
+}
+  
+    // return new Response(JSON.stringify({ success: 'Files processed successfully' }));
+   
+let amountOfPlatforms = 0;
+let amountSucceded = 0;
+const platformFailed: string[] = []
+if(showTiktok) {
+    amountOfPlatforms++
+}
+if(showLinkedin) {
+    amountOfPlatforms++
+}
+if(showTwitter) {
+    amountOfPlatforms++
+}
+if(showFacebook) {
+    amountOfPlatforms++
+}
+if(showInstagram) {
+    amountOfPlatforms++
+}
 
     const session = await getServerUser();
-    const linkedinAuthState = await getSocialAuthState("linkedin");
-    const linkedinMediaDetails = await getSocialMediaDetails("linkedin");
 
     if (!session) {
       return NextResponse.json(
@@ -35,7 +93,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const isNoPostData = postText.length < 1 && imagesArray.length < 1 && !video;
+    const isNoPostData = postText.length < 1 && imagesArray.length < 1 && !videoFile;
     const isNoPlatformChosen =
       !showTiktok &&
       !showLinkedin &&
@@ -55,80 +113,63 @@ export async function POST(req: Request) {
         { error: "Please select at least one social media platform to continue." },
         { status: 400 }
       );
+
     }
 
     if (showLinkedin) {
-      if (
-        !linkedinMediaDetails ||
-        linkedinAuthState === false ||
-        !linkedinMediaDetails.accessToken ||
-        !linkedinMediaDetails.userId
-      ) {
-        return NextResponse.json(
-          { error: "You are not authorized to post. Please check your authentication on the platforms and try again." },
-          { status: 401 }
-        );
-      }
-
-      // Handle text post
-      if (!video && imagesArray.length < 1) {
-        const response = await createLinkedinTextPost(
-          linkedinMediaDetails.accessToken,
-          linkedinMediaDetails.userId,
-          postText
-        );
-
-        if (!response) {
-          return NextResponse.json(
-            { error: "Unable to post to LinkedIn, try again later." },
-            { status: 500 }
-          );
+      const {error} = await createLinkedinPost(isVideoChosen, postData )
+      if (error) {
+        console.error(error);
+        if(!platformFailed.includes("linkedin")) {
+            platformFailed.push("linkedin")
         }
-
-        return NextResponse.json({ success: "Post sent successfully" });
+       
+      } else {
+        amountSucceded++
       }
 
-      // Handle media post
-      const uploadUrl = await uploadAllLinkedinMedia(
-        linkedinMediaDetails.accessToken,
-        linkedinMediaDetails.userId,
-        imagesArray,
-        video,
-        isVideoChosen
-      );
 
-      if (!uploadUrl) {
-        return NextResponse.json(
-          { error: "Unable to post to LinkedIn, try again later." },
-          { status: 500 }
-        );
-      }
-
-      const response = await createLinkedinMediaPost(
-        linkedinMediaDetails.accessToken,
-        linkedinMediaDetails.userId,
-        postText,
-        uploadUrl
-      );
-console.log(response)
-      if (!response) {
-        return NextResponse.json(
-          { error: "Unable to post to LinkedIn, try again later." },
-          { status: 500 }
-        );
-      }
-
-      return NextResponse.json({ success: "Post sent successfully" });
     }
+    if (showTwitter) {
+      const {error} = await createTwitterPost(isVideoChosen, postData )
+      if (error) {
+        console.error(error);
+        if(!platformFailed.includes("twitter")) {
+            platformFailed.push("twitter")
+        }
+       
+      } else {
+        amountSucceded++
+      }
 
-    return NextResponse.json(
-      { error: "No platform chosen" },
-      { status: 400 }
-    );
+
+    }
+    // if (showTiktok) {
+    //   const {error} = await createTiktokPost(isVideoChosen, postData )
+    //   if (error) {
+    //     console.error(error);
+    //     if(!platformFailed.includes("tiktok")) {
+    //         platformFailed.push("tiktok")
+    //     }
+       
+    //   } else {
+    //     amountSucceded++
+    //   }
+
+
+    // }
+    const platformErrorLength = platformFailed.length ;
+    const successMessage = `${amountSucceded}/${amountOfPlatforms} sent successfully. ${platformFailed.length > 0 ? `${ platformFailed.map((platform, index) => `${platform}${index + 1 < platformFailed.length ? "," : ""}`).join(" ")} ${platformErrorLength > 1 ? "were": "was"} unsuccessful` : ""}. It might take a while to reflect on the various platforms`;
+
+if(amountSucceded < 1) {
+    return NextResponse.json({ error: "Unable to create post" }, { status: 500 });
+
+}
+    return NextResponse.json({ success: successMessage });
   } catch (error) {
-    console.error(`LinkedIn error: ${error}`);
+    console.error(`Posting error: ${error}`);
     return NextResponse.json(
-      { error: "Unable to post to LinkedIn, try again later." },
+      { error: "Unable to post , try again later." },
       { status: 500 }
     );
   }

@@ -55,7 +55,6 @@ export async function GET(request: NextRequest) {
     const userInfo = await loggedClient.v2.me();
 const userId = userInfo.data.id;
 
-   console.log(accessTokenSecret)
 
     const expiresAt = Date.now() + 6 * 30 * 24 * 60 * 60 * 1000;
 

@@ -23,7 +23,6 @@ import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { Switch } from "@/components/ui/switch";
 import { Images } from "@/components/images";
-// import { createPostAction } from "@/actions/create-post-action";
 import { MiniLoader } from "@/components/mini-loader";
 import axios from "axios";
 type Checked = DropdownMenuCheckboxItemProps["checked"];
@@ -122,8 +121,8 @@ export const CreatePostUI: FC = () => {
     return;
   }
   const socialMedia = session.socialMedia;
-  const changeImageSection = () => {
-    setIsImageSection(!isImageSection);
+  const changeImageSection = (changeValue: boolean) => {
+    setIsImageSection(changeValue);
   };
   const getIsSocialAuth = (name: string): ISocial | undefined => {
     if (!socialMedia) {
@@ -260,6 +259,7 @@ export const CreatePostUI: FC = () => {
 
     setPostText("");
   };
+ 
   const createPostHandler = async () => {
     if (!isReadyToPost) {
       toast({
@@ -269,30 +269,46 @@ export const CreatePostUI: FC = () => {
       });
       return;
     }
-  
-    setIsPostLoading(true);
-  
-    const postData = {
-      postText,
-      imagesArray,
-      video,
-      showTiktok,
-      showLinkedin,
-      showTwitter,
-      showFacebook,
-      showInstagram,
-    };
+   
+   
+    toast({
+      description: " Note: This may take a while. Thank you for your patience!",
+    });
+
+    const formData = new FormData();
+    formData.append('postText', postText);
+
+
+    imagesArray.forEach((image, index) => {
+      formData.append(`imagesArray`, image); 
+    });
+
+    if (video) {
+      formData.append('video', video);
+    }
+
+    // Append other data
+    formData.append('showTiktok', String(showTiktok));
+    formData.append('showLinkedin', String(showLinkedin));
+    formData.append('showTwitter', String(showTwitter));
+    formData.append('showFacebook', String(showFacebook));
+    formData.append('showInstagram', String(showInstagram));
+    formData.append('isVideoChosen', String(isVideoChosen));
+
   
     try {
-      const response = await axios.post("/api/create-post", {
-        isVideoChosen,
-        postData,
-      });
+      setIsPostLoading(true);
+      const response = await axios.post('/api/create-post', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data', 
+        },
+      })
   
       if (response.data.success) {
         toast({
           description: response.data.success || "Post sent successfully!",
         });
+        discardHandler()
       } else {
         toast({
           variant: "destructive",
@@ -322,7 +338,7 @@ export const CreatePostUI: FC = () => {
         <section className="flex flex-col flex-grow  items-center gap-4 overflow-hidden  py-4">
           <div className="p-1 w-full bg-secondary text-sm rounded-md max-w-[400px] flex *:cursor-pointer *:flex *:justify-center *:items-center justify-center">
             <button
-              onClick={changeImageSection}
+              onClick={() => changeImageSection(false)}
               className={`w-1/2 p-2  rounded ${
                 !isImageSection ? "bg-background " : ""
               }   transition-colors duration-300 ease-in`}
@@ -331,7 +347,7 @@ export const CreatePostUI: FC = () => {
               Post
             </button>
             <button
-              onClick={changeImageSection}
+              onClick={() => changeImageSection(true)}
               className={`w-1/2 p-2  rounded ${
                 isImageSection ? "bg-background " : ""
               }   transition-colors duration-300 ease-in`}
@@ -455,7 +471,7 @@ export const CreatePostUI: FC = () => {
                   variant="outline"
                   className="w-full max-w-[250px] min-h-[44px] flex justify-between gap-1 text-sm items-center"
                 >
-                  <span>Choose platform</span>
+                  <span>Choose platforms</span>
                   <IoIosArrowDown />
                 </Button>
               </DropdownMenuTrigger>
@@ -465,7 +481,7 @@ export const CreatePostUI: FC = () => {
                 <DropdownMenuCheckboxItem
                   checked={showTiktok}
                   onCheckedChange={setShowTiktok}
-                  disabled={getIsSocialAuth("tiktok") ? false : true}
+                  disabled={true}
                 >
                   Tiktok
                 </DropdownMenuCheckboxItem>
@@ -508,6 +524,10 @@ export const CreatePostUI: FC = () => {
             {showFacebook && <Badge variant="outline">Facebook</Badge>}
             {showInstagram && <Badge variant="outline">Instagram</Badge>}
           </div>
+          <p className="text-sm md:text-left w-full text-center">
+              Posting to tiktok is currently unavailable
+           
+            </p>
           {(!getIsSocialAuth("tiktok") ||
             !getIsSocialAuth("linkedin") ||
             !getIsSocialAuth("twitter")) && (

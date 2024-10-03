@@ -16,8 +16,7 @@ export const getNewTiktokAccessToken = async (
     console.error("Client ID or Client Secret is not defined.");
     return undefined;
   }
-
-  const authorizationUrl = "https://open.tiktokapis.com/v2/oauth/token";
+  const authorizationUrl = "https://open.tiktokapis.com/v2/oauth/token/";
   
   try {
     await connectToDatabase();

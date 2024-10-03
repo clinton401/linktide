@@ -1,27 +1,18 @@
 "use server";
 import { getSocialAuthState } from "@/hooks/get-social-auth-state";
 import { getSocialMediaDetails } from "@/hooks/get-social-media-details";
-// import axios from "axios";
-// import { findOne } from "@/data/users-data";
 import { getServerUser } from "@/hooks/get-server-user";
-import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
 import {
   uploadAllLinkedinMedia,
   createLinkedinMediaPost,
   createLinkedinTextPost,
 } from "@/lib/create-post-utils";
-type Checked = DropdownMenuCheckboxItemProps["checked"];
 type PostData = {
   postText: string;
-  imagesArray: File[];
-  video: File | undefined;
-  showTiktok: Checked | undefined;
-  showLinkedin: Checked | undefined;
-  showTwitter: Checked | undefined;
-  showFacebook: Checked | undefined;
-  showInstagram: Checked | undefined;
+  imagesArray: Buffer[];
+  video: Buffer | null | undefined;
 };
-export const createPostAction = async (
+export const createLinkedinPost = async (
   isVideoChosen: boolean,
   postData: PostData
 ): Promise< {
@@ -31,12 +22,7 @@ export const createPostAction = async (
   const {
     postText,
     imagesArray,
-    video,
-    showTiktok,
-    showLinkedin,
-    showTwitter,
-    showFacebook,
-    showInstagram,
+    video
   } = postData;
   const session = await getServerUser();
   const linkedinAuthState = await getSocialAuthState("linkedin");
@@ -45,30 +31,16 @@ export const createPostAction = async (
   if (!session) {
     return { error: "User not allowed to view this resource", success: undefined };
   }
-  const successRequest = {
-    tiktok: false,
-    linkedin: false,
-    twitter: false,
-  };
+  
   const isNoPostData = postText.length < 1 && imagesArray.length < 1 && !video;
-  const isNoPlatformChosen =
-    !showTiktok &&
-    !showLinkedin &&
-    !showTwitter &&
-    !showFacebook &&
-    !showInstagram;
+ 
   if (isNoPostData)
     return {
       error: "Please upload at least one text, video, or image to proceed.",
       success: undefined,
     };
-  if (isNoPlatformChosen)
-    return {
-      error: "Please select at least one social media platform to continue.",
-      success: undefined,
-    };
+ 
   try {
-    if (showLinkedin) {
       if (
         !linkedinMediaDetails ||
         linkedinAuthState === false ||
@@ -82,6 +54,10 @@ export const createPostAction = async (
         };
       }
       if (!video && imagesArray.length < 1) {
+        if(postText.length < 2) return {
+          error: "Text must be 2 characters or more",
+          success: undefined
+      }
         const response = await createLinkedinTextPost(
           linkedinMediaDetails.accessToken,
           linkedinMediaDetails.userId,
@@ -115,7 +91,8 @@ export const createPostAction = async (
           linkedinMediaDetails.accessToken,
           linkedinMediaDetails.userId,
           postText,
-          uploadUrl
+          uploadUrl,
+          isVideoChosen
         );
         if (!response) {
           return {
@@ -128,13 +105,7 @@ export const createPostAction = async (
           success: "Post sent successfully",
         };
       }
-    } 
-    return {
-       
-            error: "No platform chosen",
-            success: undefined,
-          
-    }
+    
   } catch (error) {
     console.log(`Linkedin error: ${error}`);
     return {
