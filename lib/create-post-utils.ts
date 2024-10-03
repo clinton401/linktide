@@ -54,7 +54,7 @@ export const uploadTiktokVideoBuffer = async (uploadUrl: string, videoBuffer: Bu
 
     console.log('Video upload successful:', response.data);
     return response.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error.response) {
       const apiError = error.response.data?.error;
       if (apiError && apiError.message) {
@@ -128,7 +128,7 @@ export const initiateTiktokVideoUpload = async (accessToken: string, videoSize: 
     }
 
     return { upload_url: data.upload_url, publish_id: data.publish_id }; 
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error.response) {
       const apiError = error.response.data?.error;
       if (apiError && apiError.message) {
@@ -144,9 +144,7 @@ export const initiateTiktokVideoUpload = async (accessToken: string, videoSize: 
 
 
 
-const uploadTiktokMultipleMedia = async(accessToken: string, ) => {
 
-}
 
 
 
@@ -158,8 +156,7 @@ const uploadTiktokMultipleMedia = async(accessToken: string, ) => {
 const getClient = async () => {
   const {
     TWITTER_API_KEY: CONSUMER_KEY,
-    TWITTER_API_SECRET_KEY: CONSUMER_SECRET,
-    TWITTER_BEARER_TOKEN: BEARER_TOKEN,
+    TWITTER_API_SECRET_KEY: CONSUMER_SECRET
   } = process.env;
 
   if (!CONSUMER_KEY || !CONSUMER_SECRET ) {
@@ -513,7 +510,7 @@ export const createLinkedinTextPost = async (
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
-        "X-Restli-Protocol-Version": "2.0.0", // Required for UGC API
+        "X-Restli-Protocol-Version": "2.0.0", 
       },
     });
 

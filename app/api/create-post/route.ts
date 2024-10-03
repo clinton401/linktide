@@ -3,23 +3,9 @@ import { NextResponse } from "next/server";
 import { getServerUser } from "@/hooks/get-server-user";
 import { createLinkedinPost } from "@/actions/create-linkedin-post";
 import { createTwitterPost } from "@/actions/create-twitter-post";
-import { createTiktokPost } from "@/actions/create-tiktok-post";
 
 
-const readFile = (req: Request): Promise<string> =>
-  new Promise(async (resolve, reject) => {
-    const data = await req.formData();
-    const file = data.get('file') as File | null;
 
-    if (!file) {
-      return reject('No file sent!');
-    }
-
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const content = buffer.toString('utf8');
-
-    resolve(content);
-  });
 
 
 export async function POST(req: Request) {

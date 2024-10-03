@@ -279,7 +279,7 @@ export const CreatePostUI: FC = () => {
     formData.append('postText', postText);
 
 
-    imagesArray.forEach((image, index) => {
+    imagesArray.forEach((image) => {
       formData.append(`imagesArray`, image); 
     });
 
