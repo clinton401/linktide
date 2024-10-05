@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    await AuthState.findOneAndDelete({ state });
+    await AuthState.findByIdAndDelete(authState._id);
 
     const params = new URLSearchParams({
       grant_type: "authorization_code",
