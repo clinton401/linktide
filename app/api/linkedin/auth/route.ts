@@ -1,7 +1,7 @@
 import { generateRandomState } from "@/lib/auth-utils";
 import { CustomError } from "@/lib/custom-error-utils";
 import { NextResponse } from "next/server";
-import AuthState from "@/models/auth-state-schema";
+import LinkedInAuthState from "@/models/linkedin-auth-state-schema";
 import { connectToDatabase } from "@/lib/db";
 export async function GET() {
   const { LINKEDIN_CLIENT_ID: CLIENT_ID } = process.env;
@@ -17,16 +17,10 @@ export async function GET() {
   }
   try {
     await connectToDatabase();
-    const newState = await AuthState.findOneAndUpdate(
-      { state },  // filter condition
-      { 
-        $set: { expiresAt },  // update operation
-      },
-      { 
-        new: true,  // return the updated document
-        upsert: true,  
-      }
-    );
+    const newState = await LinkedInAuthState.create({
+      state,
+      expiresAt,
+    });
     // console.log(`New State: ${JSON.stringify(newState)}`);
     if(!newState) return NextResponse.json({ error: 'Unable to create Linkedin state' }, { status: 500 });
     

@@ -1,5 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
-import AuthState from "@/models/auth-state-schema";
+// import AuthState from "@/models/auth-state-schema";
+
+import LinkedInAuthState from "@/models/linkedin-auth-state-schema";
 import { connectToDatabase } from "@/lib/db";
 import axios from "axios";
 import { getServerUser } from "@/hooks/get-server-user";
@@ -33,7 +35,7 @@ export async function GET(request: NextRequest) {
   try {
     await connectToDatabase();
 
-    const authState = await AuthState.findOne({
+    const authState = await LinkedInAuthState.findOne({
       state,
       expiresAt: { $gte: new Date() },
     });
@@ -123,7 +125,7 @@ export async function GET(request: NextRequest) {
     }
 
     await user.save();
-    await AuthState.findByIdAndDelete(authState._id);
+    await LinkedInAuthState.findByIdAndDelete(authState._id);
 
     return NextResponse.redirect(new URL("/analytics/linkedin", request.url));
   } catch (error) {
