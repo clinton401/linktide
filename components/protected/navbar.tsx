@@ -5,10 +5,9 @@ import { IoMdSettings } from "react-icons/io";
 import { FaSquarePlus } from "react-icons/fa6";
 import { MdOutlineDashboard, MdDashboard } from "react-icons/md";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { FaUser } from "react-icons/fa";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import type { UserSession } from "./create-post-ui";
 export const Navbar: FC<{user: UserSession | undefined}> = ({user}) => {
 const {push} = useRouter()
