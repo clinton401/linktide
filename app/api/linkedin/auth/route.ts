@@ -21,11 +21,15 @@ export async function GET() {
       state,
       expiresAt,
     });
-    console.log(`New State: ${JSON.stringify(newState)}`);
-    if(!newState) return NextResponse.json({ error: 'Unable to create Linkedin state' }, { status: 500 });
+   
+    if(newState) {
+      console.log(`New State: ${JSON.stringify(newState)}`);
+      return NextResponse.json({redirectTo: authorizationUrl});
+    }
+return NextResponse.json({ error: 'Unable to create Linkedin state' }, { status: 500 });
     
    
-    return NextResponse.json({redirectTo: authorizationUrl});
+
   } catch (error) {
     console.error(error);
     if (error instanceof CustomError) {
