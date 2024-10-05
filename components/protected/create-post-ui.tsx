@@ -54,6 +54,7 @@ const sectionAnimation = {
 export type UserSession = {
   email?: string | null; 
   id: string;
+  image?: string | null;
   oauth?: IOauth[];
   socialMedia?: ISocial[];
   "2FA"?: boolean;

@@ -8,13 +8,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname } from "next/navigation";
 import { FaUser } from "react-icons/fa";
 import Link from "next/link";
-import { useCurrentUser } from "@/hooks/use-current-user";
-
-export const Navbar: FC = () => {
-  const user = useCurrentUser();
+import { useRouter } from "next/router";
+import type { UserSession } from "./create-post-ui";
+export const Navbar: FC<{user: UserSession | undefined}> = ({user}) => {
+const {push} = useRouter()
   const pathname = usePathname();
 
-
+if(!user) {
+  push("/auth/login")
+  return;
+}
   
 
   return (
@@ -25,7 +28,7 @@ export const Navbar: FC = () => {
             <AvatarImage src={user?.image || ""} alt={`${user?.name || "User"} image`} />
             <AvatarFallback><FaUser /></AvatarFallback>
           </Avatar>
-          <h3 className="truncate text-sm">{user?.name || "User"}</h3>
+          <h3 className="truncate border flex-w-full items-center justify-center  text-sm">{user?.name || "User"}</h3>
         </div>
         <section className="w-full flex-col *:flex overflow-x-hidden *:items-end flex gap-y-6">
           <Link href="/analytics/linkedin">
