@@ -22,12 +22,12 @@ if(!user) {
   return (
     <header>
       <nav className="fixed z-30 text-gray-300 hidden w-[75px] hover:w-[200px] py-4 px-4 transition-all ease-linear duration-300 md:flex flex-col gap-y-12 min-h-dvh bg-primary desktop_header left-0 top-0">
-        <div className="flex w-[44px] flex-col items-center justify-center">
+        <div className="flex w-full flex-col  justify-center">
           <Avatar>
             <AvatarImage src={user?.image || ""} alt={`${user?.name || "User"} image`} />
             <AvatarFallback><FaUser /></AvatarFallback>
           </Avatar>
-          <h3 className="truncate border flex-w-full items-center justify-center  text-sm">{user?.name || "User"}</h3>
+          <h3 className="truncate  w-full  text-sm">{user?.name || "User"}</h3>
         </div>
         <section className="w-full flex-col *:flex overflow-x-hidden *:items-end flex gap-y-6">
           <Link href="/analytics/linkedin">
