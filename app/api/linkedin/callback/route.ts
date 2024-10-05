@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    await AuthState.findByIdAndDelete(authState._id);
+   
 
     const params = new URLSearchParams({
       grant_type: "authorization_code",
@@ -122,6 +122,7 @@ export async function GET(request: NextRequest) {
     }
 
     await user.save();
+    await AuthState.findByIdAndDelete(authState._id);
 
     return NextResponse.redirect(new URL("/analytics/linkedin", request.url));
   } catch (error) {
