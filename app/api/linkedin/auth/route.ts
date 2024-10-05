@@ -17,16 +17,18 @@ export async function GET() {
   }
   try {
     await connectToDatabase();
-    await AuthState.findOneAndUpdate(
-      { state },  
-      {   
-        expiresAt, 
+    const newState = await AuthState.findOneAndUpdate(
+      { state },  // filter condition
+      { 
+        $set: { expiresAt },  // update operation
       },
       { 
-        new: true,  
-        upsert: true, 
+        new: true,  // return the updated document
+        upsert: true,  
       }
     );
+    if(!newState) return NextResponse.json({ error: 'Unable to create Linkedin state' }, { status: 500 });
+    
    
     return NextResponse.json({redirectTo: authorizationUrl});
   } catch (error) {
