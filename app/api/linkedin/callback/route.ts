@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
   const error = url.searchParams.get("error");
   const REDIRECT_URI = "http://localhost:3000/api/linkedin/callback";
   const authorizationUrl = `https://www.linkedin.com/oauth/v2/accessToken`;
-
+console.log(`Auth code: ${code}`)
   if (!CLIENT_ID || !CLIENT_SECRET ) {
     return NextResponse.redirect(
       new URL(`/analytics/linkedin?error=${encodeURIComponent("CLIENT ID and SECRET are required")}`, request.url)
