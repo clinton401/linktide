@@ -21,7 +21,7 @@ export async function GET() {
       state,
       expiresAt,
     });
-    // console.log(`New State: ${JSON.stringify(newState)}`);
+    console.log(`New State: ${JSON.stringify(newState)}`);
     if(!newState) return NextResponse.json({ error: 'Unable to create Linkedin state' }, { status: 500 });
     
    
