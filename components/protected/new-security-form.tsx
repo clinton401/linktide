@@ -28,7 +28,6 @@ import logo from "../../public/assets/logo.png";
 import { Images } from "@/components/images";
 import { newSecurity } from "@/actions/new-security";
 import { bodoni } from "@/lib/fonts";
-import { useCurrentUser } from "@/hooks/use-current-user";
 
 import type { UserSession } from "@/components/protected/create-post-ui";
 import { Switch } from "@/components/ui/switch";
