@@ -136,8 +136,15 @@ try{
     redirectUrl: undefined,
     isOtpSent: false
   };
-
-  const isPasswordTheSameAsLastOne = foundUser?.password ? await validatePassword(newPassword, foundUser.password): false;
+  if(!foundUser?.password) {
+    return {
+        error: "Password can't be changed for accounts signed in with an OAuth provider.",
+        success: "",
+        redirectUrl: undefined,
+    isOtpSent: false
+    }
+}
+  const isPasswordTheSameAsLastOne =  await validatePassword(newPassword, foundUser.password);
   if(isPasswordTheSameAsLastOne) return {
     error: "New password cannot be the same as the current one",
     success: undefined,

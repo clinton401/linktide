@@ -1,21 +1,21 @@
 import { FC } from "react";
-import { AnalyticsParentComponent } from "@/components/protected/analytics-parent-component";
-import { PiTiktokLogo } from "react-icons/pi";
+// import { AnalyticsParentComponent } from "@/components/protected/analytics-parent-component";
+// import { PiTiktokLogo } from "react-icons/pi";
 import { bodoni } from "@/lib/fonts";
-import { getSocialAuthState } from "@/hooks/get-social-auth-state";
-import { tiktokData } from "@/actions/tiktok-data";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { FaUser } from "react-icons/fa";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+// import { getSocialAuthState } from "@/hooks/get-social-auth-state";
+// import { tiktokData } from "@/actions/tiktok-data";
+// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+// import { FaUser } from "react-icons/fa";
+// import { Button } from "@/components/ui/button";
+// import Link from "next/link";
+// import {
+//   Card,
+//   CardContent,
+//   CardDescription,
+//   CardFooter,
+//   CardHeader,
+//   CardTitle,
+// } from "@/components/ui/card";
 export const metadata = {
   title: 'TikTok Analytics Overview',
   description: "View a snapshot of your TikTok analytics and user data with Linktide. Access basic insights into video performance and audience growth.",
@@ -23,23 +23,28 @@ export const metadata = {
 
 
 const TikTokPage: FC = async () => {
-  const isAuth = await getSocialAuthState("tiktok");
-  if (!isAuth) {
-    return (
-      <AnalyticsParentComponent
-        name="tiktok"
-        redirectUrl="/api/tiktok/auth"
-        icon={<PiTiktokLogo className="ml-1" />}
-      />
-    );
-  }
-  const userData = await tiktokData();
-  const { data, error } = userData;
-  if (error || !data) {
-    throw new Error(error || "Unable to retrieve user data");
-  }
+  // const isAuth = await getSocialAuthState("tiktok");
+  // if (!isAuth) {
+  //   return (
+  //     <AnalyticsParentComponent
+  //       name="tiktok"
+  //       redirectUrl="/api/tiktok/auth"
+  //       icon={<PiTiktokLogo className="ml-1" />}
+  //     />
+  //   );
+  // }
+  // const userData = await tiktokData();
+  // const { data, error } = userData;
+  // if (error || !data) {
+  //   throw new Error(error || "Unable to retrieve user data");
+  // }
   return (
-    <section className="w-full px-[5%] min-h-dvh pt-6 md:pt-4  space-y-8">
+    <section className="w-full px-[5%] pt-6 md:pt-4  flex items-center min-h-dvh justify-center gap-6 flex-col">
+    <h1 className={` ${bodoni.className} text-3xl font-black w-full text-center `}>
+
+    We&apos;re sorry, but this feature is temporarily unavailable. Our team is working hard to restore it as soon as possible. Thank you for your understanding and patience. Stay tuned for updates!
+    </h1>
+    {/* <section className="w-full px-[5%] min-h-dvh pt-6 md:pt-4  space-y-8">
       <h2
         className={` ${bodoni.className} text-xl font-black w-full text-left `}
       >
@@ -86,7 +91,10 @@ const TikTokPage: FC = async () => {
           </Avatar>
         </div>
       </section>
-    </section>
+
+    </section> */}
+  </section>
+    
   );
 };
 

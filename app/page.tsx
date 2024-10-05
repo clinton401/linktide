@@ -36,7 +36,7 @@ const Home: FC = async () => {
         </p>
         {session ? (
           <Button size="lg">
-            <Link href="/analytics/tiktok">View analytics</Link>
+            <Link href="/analytics/linkedin">View analytics</Link>
           </Button>
         ) : (
           <LoginButton />

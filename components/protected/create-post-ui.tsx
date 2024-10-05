@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
-import { useCurrentUser } from "@/hooks/use-current-user";
+// import { useCurrentUser } from "@/hooks/use-current-user";
 import { useRouter } from "next/navigation";
 import type { ISocial } from "@/models/social-media-schema";
 import { DiscardAlert } from "@/components/protected/discard-alert";
@@ -25,6 +25,7 @@ import { Switch } from "@/components/ui/switch";
 import { Images } from "@/components/images";
 import { MiniLoader } from "@/components/mini-loader";
 import axios from "axios";
+import type { IOauth } from "@/models/oauth-schema";
 type Checked = DropdownMenuCheckboxItemProps["checked"];
 const sectionAnimation = {
   hidden: {
@@ -50,8 +51,20 @@ const sectionAnimation = {
     },
   },
 };
+export type UserSession = {
+  email?: string | null; 
+  id: string;
+  oauth?: IOauth[];
+  socialMedia?: ISocial[];
+  "2FA"?: boolean;
+  name: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  isPasswordAvailable?: boolean;
+};
 
-export const CreatePostUI: FC = () => {
+
+export const CreatePostUI: FC<{session: UserSession | undefined}> = ({session}) => {
   const [isImageSection, setIsImageSection] = useState(false);
   const [showTiktok, setShowTiktok] = useState<Checked>(false);
   const [showLinkedin, setShowLinkedin] = useState<Checked>(false);
@@ -71,7 +84,7 @@ export const CreatePostUI: FC = () => {
   const [isPostLoading, setIsPostLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoFileInputRef = useRef<HTMLInputElement>(null);
-  const session = useCurrentUser();
+  // const session = useCurrentUser();
   const { push } = useRouter();
   const { toast } = useToast();
   useEffect(() => {
@@ -478,13 +491,7 @@ export const CreatePostUI: FC = () => {
               <DropdownMenuContent className="w-full min-w-[250px]">
                 <DropdownMenuLabel>Platforms</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuCheckboxItem
-                  checked={showTiktok}
-                  onCheckedChange={setShowTiktok}
-                  disabled={true}
-                >
-                  Tiktok
-                </DropdownMenuCheckboxItem>
+               
 
                 <DropdownMenuCheckboxItem
                   checked={showLinkedin}
@@ -493,12 +500,20 @@ export const CreatePostUI: FC = () => {
                 >
                   Linkedin
                 </DropdownMenuCheckboxItem>
+
                 <DropdownMenuCheckboxItem
                   checked={showTwitter}
                   onCheckedChange={setShowTwitter}
                   disabled={getIsSocialAuth("twitter") ? false : true}
                 >
                   Twitter
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem
+                  checked={showTiktok}
+                  onCheckedChange={setShowTiktok}
+                  disabled={true}
+                >
+                  Tiktok
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem
                   checked={showFacebook}
@@ -525,7 +540,7 @@ export const CreatePostUI: FC = () => {
             {showInstagram && <Badge variant="outline">Instagram</Badge>}
           </div>
           <p className="text-sm md:text-left w-full text-center">
-              Posting to tiktok is currently unavailable
+          Posting to TikTok, Facebook, and Instagram is currently unavailable
            
             </p>
           {(!getIsSocialAuth("tiktok") ||
@@ -535,7 +550,7 @@ export const CreatePostUI: FC = () => {
               To post on more social media platforms, click{" "}
               <span>
                 <Link
-                  href="/analytics/tiktok"
+                  href="/analytics/linkedin"
                   className="text-primary underline"
                 >
                   here
@@ -548,22 +563,20 @@ export const CreatePostUI: FC = () => {
       </div>
       <div
         className="w-full flex  md:border-t *:px-[3%]
- justify-between flex-wrap items-center md:pb-0 pb-[80px] "
+ justify-end flex-wrap items-center md:pb-0 pb-[80px] "
       >
-        <section className="w-full md:w-[65%] md:justify-start justify-center py-4 md:border-r flex ">
+        {/* <section className="w-full md:w-[65%] md:justify-start justify-center py-4 md:border-r flex ">
           <DiscardAlert
             isReadyToDiscard={isReadyToDiscard || isPostLoading}
             discardHandler={discardHandler}
           />
-        </section>
-        <section className="w-full md:w-[35%] md:py-4 gap-y-4 gap-x-2   flex items-center justify-center md:justify-between ">
-          <Button
-            variant="secondary"
-            className="w-[90px]"
-            disabled={!isReadyToPost || isPostLoading}
-          >
-            Save draft
-          </Button>
+        </section> */}
+        <section className="w-full md:w-[35%] md:py-4 gap-y-4 gap-x-2  md:border-l flex items-center justify-center md:justify-between ">
+        <DiscardAlert
+            isReadyToDiscard={isReadyToDiscard || isPostLoading}
+            discardHandler={discardHandler}
+          />
+        
           <Button className="w-[90px]" disabled={!isReadyToPost || isPostLoading} onClick={()=>createPostHandler()}>
             {isPostLoading ? <MiniLoader/> : "Post"}
             

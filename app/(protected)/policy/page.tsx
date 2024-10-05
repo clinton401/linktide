@@ -1,9 +1,13 @@
 import {FC} from 'react';
 import Link from "next/link"
-import { FuzzyOverlay } from "@/components/framer-motion/fuzzy-overlay";
+export const metadata = {
+    title: 'Privacy Policy',
+    description: "Learn how Linktide handles your data, protects your privacy, and ensures the security of your personal information.",
+  };
+  
 const PrivacyPolicy: FC = ()  => {
     return (
-        <div className="container relative overflow-hidden text-white mx-auto px-4 py-10">
+        <div className="container relative overflow-hidden  mx-auto px-4 py-10">
             <h1 className="text-3xl font-bold mb-6 text-center">Privacy Policy</h1>
 
             <section className="mb-8">
@@ -92,7 +96,6 @@ const PrivacyPolicy: FC = ()  => {
                     <Link  href="mailto:clintonphillips464@gmail.com" className="underline ml-1">clintonphillips464@gmail.com</Link>.
                 </p>
             </section>
-            <FuzzyOverlay/>
         </div>
     );
 }

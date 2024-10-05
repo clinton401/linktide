@@ -12,13 +12,13 @@ import { usePathname } from "next/navigation";
 export const SocialMediaLinks: FC = () => {
   const pathname = usePathname();
   const socialMediaPlatforms = [
-    { name: "TikTok", url: "/analytics/tiktok", icon: <PiTiktokLogo /> },
     {
       name: "LinkedIn",
       url: "/analytics/linkedin",
       icon: <SlSocialLinkedin />,
     },
     { name: "Twitter", url: "/analytics/twitter", icon: <RiTwitterXLine /> },
+    { name: "TikTok", url: "/analytics/tiktok", icon: <PiTiktokLogo /> },
     {
       name: "Facebook",
       url: "/analytics/facebook",

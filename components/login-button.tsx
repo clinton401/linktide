@@ -1,3 +1,4 @@
+"use client"
 import {FC} from "react"
 import { Button } from "@/components/ui/button"
 import {LoginForm} from "@/components/auth/login-form";

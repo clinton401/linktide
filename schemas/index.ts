@@ -1,12 +1,33 @@
 import * as z from "zod";
 
+const SecuritySchema = z.object({
+  twoFA: z.boolean().optional(),
+  newPassword: z.string()
+    .trim().min(6, { message: "Minimum 6 characters required" }).optional() ,
+});
+
+const ProfileEditSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .email({ message: "Please provide a valid email address" })
+    .optional(), 
+  name: z
+    .string()
+    .trim()
+    .min(3, { message: "Minimum 3 characters required" })
+    .max(25, { message: "Name cannot be longer than 25 characters" })
+    .optional(),
+});
+
+
 const ResetSchema = (isCodeSent: boolean) => z.object({
   email: z.string()
-    .trim() // Trims the email input
+    .trim() 
     .email({ message: "Please provide a valid email address" })
     .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, { message: "Invalid email format" }),
   otp: z.string()
-    .trim() // Trims the OTP input
+    .trim() 
     .min(6, { message: "OTP must be at least 6 characters long" })
     .max(6, { message: "OTP must not exceed 6 characters" })
     .optional()
@@ -14,7 +35,7 @@ const ResetSchema = (isCodeSent: boolean) => z.object({
       message: "Verification code is required",
     }),
   newPassword: z.string()
-    .trim() // Trims the new password input
+    .trim()
     .min(6, { message: "Minimum 6 characters required" })
     .optional()
     .refine(val => isCodeSent ? !!val : true, {
@@ -57,4 +78,4 @@ const OtpSchema = z.object({
     .max(6, { message: "OTP must be at most 6 characters" }),
 });
 
-export { LoginSchema, RegisterSchema, ResetSchema, OtpSchema };
+export { LoginSchema, RegisterSchema, ResetSchema, OtpSchema, ProfileEditSchema, SecuritySchema };

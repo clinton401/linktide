@@ -104,6 +104,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
 
       if (user) {
+        token.email = user.email
         token.sub = user._id.toString();
         token.oauth = user.oauth;
         token.socialMedia = user.socialMedia;
@@ -118,6 +119,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async session({ token, session }: { session: Session; token: any }) {
       if (!token || !session?.user) return session;
+      if(token.email) {
+        session.user.email = token.email
+      }
       if (token.sub) {
         session.user.id = token.sub;
       }

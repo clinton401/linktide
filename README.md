@@ -77,18 +77,28 @@ Ensure you have the following installed on your local machine:
 
    ```env
    MONGODB_URI=<your-mongodb-uri>
-   NEXTAUTH_SECRET=<your-nextauth-secret>
-   DOMAIN_URL=http://localhost:3000
-   FACEBOOK_CLIENT_ID=<your-facebook-client-id>
-   FACEBOOK_CLIENT_SECRET=<your-facebook-client-secret>
-   TWITTER_CLIENT_ID=<your-twitter-client-id>
-   TWITTER_CLIENT_SECRET=<your-twitter-client-secret>
-   GITHUB_CLIENT_ID=<your-github-client-id>
-   GITHUB_CLIENT_SECRET=<your-github-client-secret>
-   GOOGLE_CLIENT_ID=<your-google-client-id>
-   GOOGLE_CLIENT_SECRET=<your-google-client-secret>
-   EMAIL_PASS=<your-google-app-password>
-   EMAIL_USER=<your-email-address>
+   NODE_ENV=<development|production>
+  AUTH_SECRET=<your-auth-secret>
+  GITHUB_CLIENT_ID=<your-github-client-id>
+  GITHUB_CLIENT_SECRET=<your-github-client-secret>
+  GOOGLE_CLIENT_ID=<your-google-client-id>
+  GOOGLE_CLIENT_SECRET=<your-google-client-secret>
+  LINKEDIN_CLIENT_ID=<your-linkedin-client-id>
+  LINKEDIN_CLIENT_SECRET=<your-linkedin-client-secret>
+  LINKEDIN_REDIRECT_URI=<your-linkedin-redirect-uri>
+  TIKTOK_CLIENT_ID=<your-tiktok-client-id>
+  TIKTOK_CLIENT_SECRET=<your-tiktok-client-secret>
+  TIKTOK_REDIRECT_URI=<your-tiktok-redirect-uri>
+  TWITTER_CLIENT_ID=<your-twitter-client-id>
+  TWITTER_CLIENT_SECRET=<your-twitter-client-secret>
+  TWITTER_API_KEY=<your-twitter-api-key>
+  TWITTER_API_SECRET_KEY=<your-twitter-api-secret-key>
+  TWITTER_BEARER_TOKEN=<your-twitter-bearer-token>
+  TWITTER_REDIRECT_URI=<your-twitter-redirect-uri>
+  EMAIL_PASS=<your-email-app-password>
+  EMAIL_USER=<your-email-address>
+  DOMAIN_URL=<your-domain-url>
+
 
 
 

@@ -25,10 +25,10 @@ export const Navbar: FC = () => {
             <AvatarImage src={user?.image || ""} alt={`${user?.name || "User"} image`} />
             <AvatarFallback><FaUser /></AvatarFallback>
           </Avatar>
-          <h3 className="truncate text-sm">Clinton</h3>
+          <h3 className="truncate text-sm">{user?.name || "User"}</h3>
         </div>
         <section className="w-full flex-col *:flex overflow-x-hidden *:items-end flex gap-y-6">
-          <Link href="/analytics/tiktok">
+          <Link href="/analytics/linkedin">
             {pathname.startsWith("/analytics") ? (
               <MdDashboard className="text-2xl text-white min-w-[26px]" />
             ) : (
@@ -63,7 +63,7 @@ export const Navbar: FC = () => {
       <nav className="flex md:hidden w-full fixed max-h-[65px] left-0 bottom-0 z-30 p-4 bg-background border-t">
         <ul className="items-center flex gap-x-2 w-full justify-evenly">
           <li>
-            <Link href="/analytics/tiktok">
+            <Link href="/analytics/linkedin">
               {pathname.startsWith("/analytics") ? (
                 <MdDashboard className="text-2xl text-foreground" />
               ) : (
@@ -82,11 +82,15 @@ export const Navbar: FC = () => {
           </li>
           <li>
             <Link href="/settings">
-              {pathname.startsWith("/settings") ? (
+            <Avatar className="h-6 w-6">
+            <AvatarImage src={user?.image || ""} alt={`${user?.name || "User"} image`} />
+            <AvatarFallback><FaUser /></AvatarFallback>
+          </Avatar>
+              {/* {pathname.startsWith("/settings") ? (
                 <IoMdSettings className="text-2xl text-foreground" />
               ) : (
                 <CiSettings className="text-2xl" />
-              )}
+              )} */}
             </Link>
           </li>
         </ul>
