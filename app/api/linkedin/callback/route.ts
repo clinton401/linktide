@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
   const REDIRECT_URI = process.env.LINKEDIN_REDIRECT_URI || "http://localhost:3000/api/linkedin/callback";
   const authorizationUrl = `https://www.linkedin.com/oauth/v2/accessToken`;
 console.log(`Auth code: ${code}`)
-console.log(`Auth code from linkedin: ${state}`)
+console.log(`Auth state from linkedin: ${state}`)
   if (!CLIENT_ID || !CLIENT_SECRET ) {
     return NextResponse.redirect(
       new URL(`/analytics/linkedin?error=${encodeURIComponent("CLIENT ID and SECRET are required")}`, request.url)
@@ -35,16 +35,16 @@ console.log(`Auth code from linkedin: ${state}`)
   try {
     await connectToDatabase();
 
-    const authState = await LinkedInAuthState.findOne({
-      state,
-      expiresAt: { $gte: new Date() },
-    });
-    console.log(`Auth state: ${JSON.stringify(authState)}`)
-    if (!authState) {
-      return NextResponse.redirect(
-        new URL(`/analytics/linkedin?error=Invalid or expired state`, request.url)
-      );
-    }
+    // const authState = await LinkedInAuthState.findOne({
+    //   state,
+    //   expiresAt: { $gte: new Date() },
+    // });
+    // console.log(`Auth state: ${JSON.stringify(authState)}`)
+    // if (!authState) {
+    //   return NextResponse.redirect(
+    //     new URL(`/analytics/linkedin?error=Invalid or expired state`, request.url)
+    //   );
+    // }
 
    
 
@@ -125,7 +125,7 @@ console.log(`Auth code from linkedin: ${state}`)
     }
 
     await user.save();
-    await LinkedInAuthState.findByIdAndDelete(authState._id);
+    // await LinkedInAuthState.findByIdAndDelete(authState._id);
 
     return NextResponse.redirect(new URL("/analytics/linkedin", request.url));
   } catch (error) {
