@@ -1,14 +1,14 @@
 import {models, model, Document, Schema} from "mongoose";
 
 interface IOAuthToken extends Document {
-    oauthToken: string;
-    oauthTokenSecret: string;
+  codeVerifier: string;
+    state: string;
     expiresAt: Date
   }
   
   const TwitterOAuthTokenSchema = new Schema<IOAuthToken>({
-    oauthToken: { type: Schema.Types.String, required: true, unique: true },
-    oauthTokenSecret: { type: Schema.Types.String, required: true },
+    codeVerifier: { type: Schema.Types.String, required: true, unique: true },
+    state: { type: Schema.Types.String, required: true },
     expiresAt: { type: Schema.Types.Date, required: true },
   }, {  collection: "twitter-oauth" });
 
