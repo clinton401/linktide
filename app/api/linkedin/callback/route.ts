@@ -1,7 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 // import AuthState from "@/models/auth-state-schema";
 
-import LinkedInAuthState from "@/models/linkedin-auth-state-schema";
+// import LinkedInAuthState from "@/models/linkedin-auth-state-schema";
 import { connectToDatabase } from "@/lib/db";
 import axios from "axios";
 import { getServerUser } from "@/hooks/get-server-user";
