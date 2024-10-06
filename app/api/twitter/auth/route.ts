@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { CustomError } from "@/lib/custom-error-utils";
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
