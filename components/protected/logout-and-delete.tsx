@@ -58,7 +58,8 @@ export const LogoutAndDelete: FC = () => {
         toast({
           description: success,
         });
-        router.push("/auth/login");
+        window.location.href="/auth/login"
+        // router.push("/auth/login");
         
       }
       if (redirectUrl) {
