@@ -29,7 +29,8 @@ export const LogoutAndDelete: FC = () => {
       toast({
         description: "You have logged out successfully.",
       });
-      router.push("/auth/login");
+          window.location.href="/auth/login"
+      // router.push("/auth/login");
     } catch (error) {
       console.error(`Unable to logout: ${error}`);
       toast({
@@ -63,7 +64,8 @@ export const LogoutAndDelete: FC = () => {
         
       }
       if (redirectUrl) {
-        router.push(redirectUrl);
+        window.location.href = redirectUrl
+        // router.push(redirectUrl);
       }
     } catch (error) {
       console.error(`Unable to delete account: ${error}`);
