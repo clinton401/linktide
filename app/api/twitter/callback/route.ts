@@ -1,4 +1,3 @@
-export const dynamic = 'force-dynamic';
 import { NextResponse, NextRequest } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import axios from "axios";
