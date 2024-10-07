@@ -110,7 +110,7 @@ export const refreshTwitterAccessToken = async (refreshToken: string, email: str
       clientSecret: clientSecret,
     });
 
-    const {  accessToken, refreshToken: newRefreshToken, expiresIn } = await client.refreshOAuth2Token(refreshToken);
+    const { client: refreshedClient,  accessToken, refreshToken: newRefreshToken, expiresIn } = await client.refreshOAuth2Token(refreshToken);
     const refreshTokenExpiresAt = new Date(Date.now() + 60 * 24 * 60 * 60 * 1000);
 
     console.log('New Access Token:', accessToken);

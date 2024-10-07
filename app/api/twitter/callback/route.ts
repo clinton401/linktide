@@ -49,12 +49,12 @@ export async function GET(request: NextRequest) {
       redirectUri: TWITTER_REDIRECT_URI!,
     });
 
-    const { client: loggedClient } = await twitterClient.refreshOAuth2Token(refreshToken!); 
+    const loggedClient = new TwitterApi(accessToken);
     const userInfo = await loggedClient.v2.me();
     const userId = userInfo.data.id;
 
     const expiresAt = Date.now() + expiresIn * 1000; 
-    const refreshTokenExpiresAt = expiresAt; 
+    const refreshTokenExpiresAt = new Date(Date.now() + 60 * 24 * 60 * 60 * 1000);
 
    
     const session = await getServerUser();

@@ -80,8 +80,8 @@ export const createTwitterPost = async (
       }
       accessToken = obtainedAccessToken; 
     }
+    console.log(`Twitter accessTOken: ${accessToken}`)
     const client = new TwitterApi(accessToken);
-    
 
     if (!video && imagesArray.length < 1) {
       if (postText.length < 2) {
@@ -90,7 +90,9 @@ export const createTwitterPost = async (
           success: undefined,
         };
       }
-      await client.v2.tweet(postText);
+      const userResponse = await client.v2.user(twitterMediaDetails.userId as string);
+      console.log(`Twitter user response: ${userResponse}`)
+      // await client.v2.tweet(postText);
       return {
         error: undefined,
         success: "Tweet sent successfully",
