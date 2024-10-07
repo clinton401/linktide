@@ -544,7 +544,7 @@ export const CreatePostUI: FC<{session: UserSession | undefined}> = ({session}) 
           Posting to TikTok, Facebook, and Instagram is currently unavailable
            
             </p>
-          {(!getIsSocialAuth("tiktok") ||
+          {(
             !getIsSocialAuth("linkedin") ||
             !getIsSocialAuth("twitter")) && (
             <p className="text-sm md:text-left text-center">
