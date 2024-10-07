@@ -7,10 +7,10 @@ import {
   uploadTwitterVideo,
   uploadTwitterMultipleMedia,
 } from "@/lib/create-post-utils";
-import { isStillAuth } from "@/lib/auth-utils";
+// import { isStillAuth } from "@/lib/auth-utils";
 import { TwitterApi } from "twitter-api-v2";
 
-import { refreshTwitterAccessToken } from "@/lib/refresh-tokens";
+// import { refreshTwitterAccessToken } from "@/lib/refresh-tokens";
 type PostData = {
   postText: string;
   imagesArray: Buffer[];
@@ -60,28 +60,13 @@ export const createTwitterPost = async (
         success: undefined,
       };
     }
-    const authStatus = isStillAuth(twitterMediaDetails);
-    const {isAccessExpired, isRefreshExpired, refreshToken} = authStatus;
-    let {accessToken } = authStatus;
-    if(!accessToken) {
-      return {error: "No Access Token", success: undefined }
-    }
-    if (isAccessExpired) {
-      if (isRefreshExpired || !refreshToken) {
-        return { error: "Expired Access Token", success: undefined };
-      }
- 
-      const obtainedAccessToken = await refreshTwitterAccessToken(
-        refreshToken,
-        session.email
-      );
-      if (!obtainedAccessToken) {
-        return { error: "Failed to refresh access token", success: undefined };
-      }
-      accessToken = obtainedAccessToken; 
-    }
-    console.log(`Twitter accessTOken: ${accessToken}`)
-    const client = new TwitterApi(accessToken);
+   
+     const client = new TwitterApi({
+      appKey: CONSUMER_KEY,
+      appSecret: CONSUMER_SECRET,
+      accessToken: twitterMediaDetails.accessToken,
+      accessSecret: twitterMediaDetails.refreshToken, 
+    });
 
     if (!video && imagesArray.length < 1) {
       if (postText.length < 2) {

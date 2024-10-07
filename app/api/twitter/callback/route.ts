@@ -5,23 +5,23 @@ import axios from "axios";
 import { getServerUser } from "@/hooks/get-server-user";
 import { findOne } from "@/data/users-data";
 import type { ISocial } from "@/models/social-media-schema";
-import TwitterOauthToken from "@/models/twitter-oauth-token-schema";
+import TwitterOauthToken from "@/models/twitter-auth-schema";
 import { TwitterApi } from 'twitter-api-v2';
 
 export async function GET(request: NextRequest) {
-  const { TWITTER_CLIENT_ID, TWITTER_CLIENT_SECRET, TWITTER_REDIRECT_URI } = process.env;
+  const { TWITTER_API_KEY, TWITTER_API_SECRET_KEY, TWITTER_REDIRECT_URI } = process.env;
 
   const url = new URL(request.url);
-  const code = url.searchParams.get("code");
-  const state = url.searchParams.get("state");
+  const oauth_token = url.searchParams.get("oauth_token");
+  const oauth_verifier = url.searchParams.get("oauth_verifier");
 
-
-  if (!TWITTER_CLIENT_ID || !TWITTER_CLIENT_SECRET) {
+  if (!TWITTER_API_KEY || !TWITTER_API_SECRET_KEY || !TWITTER_REDIRECT_URI) {
     return NextResponse.redirect(
-      new URL(`/analytics/linkedin?error=${encodeURIComponent("Client ID and secret are required")}`, request.url)
+      new URL(`/analytics/twitter?error=${encodeURIComponent("API key and secret are required")}`, request.url)
     );
   }
-  if (!code || !state) {
+
+  if (!oauth_token || !oauth_verifier) {
     return NextResponse.redirect(
       new URL(`/analytics/twitter?error=${encodeURIComponent("Invalid callback parameters")}`, request.url)
     );
@@ -30,34 +30,34 @@ export async function GET(request: NextRequest) {
   try {
     await connectToDatabase();
 
-    const tokenRecord = await TwitterOauthToken.findOne({ state, expiresAt: { $gte: new Date() } });
+    const tokenRecord = await TwitterOauthToken.findOne({ oauthToken: oauth_token, expiresAt: { $gte: new Date() } });
     if (!tokenRecord) {
       return NextResponse.redirect(
-        new URL(`/analytics/twitter?error=${encodeURIComponent("Invalid or expired session state")}`, request.url)
+        new URL(`/analytics/twitter?error=${encodeURIComponent("Invalid or expired session token")}`, request.url)
+      );
+    }
+    const { oauthTokenSecret } = tokenRecord;
+
+    const client = new TwitterApi({
+      appKey: TWITTER_API_KEY!,
+      appSecret: TWITTER_API_SECRET_KEY!,
+      accessToken: oauth_token!,
+      accessSecret: oauthTokenSecret!,
+    });
+
+    const { client: loggedClient, accessToken, accessSecret } = await client.login(oauth_verifier!);
+    const userInfo = await loggedClient.v2.me();
+    
+    // Ensure userInfo is retrieved successfully
+    if (!userInfo || !userInfo.data) {
+      return NextResponse.redirect(
+        new URL(`/analytics/twitter?error=${encodeURIComponent("Failed to fetch user information")}`, request.url)
       );
     }
 
-    const { codeVerifier } = tokenRecord;
-
-    const twitterClient = new TwitterApi({
-      clientId: TWITTER_CLIENT_ID!,
-      clientSecret: TWITTER_CLIENT_SECRET!,
-    });
-
-    const { accessToken, refreshToken, expiresIn } = await twitterClient.loginWithOAuth2({
-      code,
-      codeVerifier,
-      redirectUri: TWITTER_REDIRECT_URI!,
-    });
-
-    const loggedClient = new TwitterApi(accessToken);
-    const userInfo = await loggedClient.v2.me();
     const userId = userInfo.data.id;
+    const expiresAt = new Date(Date.now() + 60 * 24 * 60 * 60 * 1000); // 60 days expiration
 
-    const expiresAt = Date.now() + expiresIn * 1000; 
-    const refreshTokenExpiresAt = new Date(Date.now() + 60 * 24 * 60 * 60 * 1000);
-
-   
     const session = await getServerUser();
     if (!session || !session.email) {
       return NextResponse.redirect(new URL("/analytics/login", request.url));
@@ -72,27 +72,26 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Store accessToken, refreshToken, and userId for the Twitter account in the user's profile
+    // Update user social media information
     const platform = user.socialMedia?.find((app: ISocial) => app.name === "twitter");
     if (platform) {
       platform.accessToken = accessToken;
       platform.expiresAt = expiresAt;
-      platform.refreshToken = refreshToken;
-      platform.refreshTokenExpiresAt = refreshTokenExpiresAt;
+      platform.refreshToken  = accessSecret; // Store the access secret
       platform.userId = userId;
+      platform.refreshTokenExpiresAt = expiresAt
     } else {
       user.socialMedia?.push({
         name: "twitter",
         accessToken,
         expiresAt,
-        refreshToken,
-        refreshTokenExpiresAt,
+        refreshToken: accessSecret, // Store the access secret
         userId,
+        refreshTokenExpiresAt: expiresAt
       });
     }
 
-
-    await TwitterOauthToken.findOneAndDelete({ state });
+    await TwitterOauthToken.findOneAndDelete({ oauthToken: oauth_token });
 
     await user.save();
 

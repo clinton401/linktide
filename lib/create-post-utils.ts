@@ -180,13 +180,12 @@ const getClient = async () => {
     console.log("No social media details");
     return undefined;
   }
-  // const client = new TwitterApi({
-  //   appKey: CONSUMER_KEY,
-  //   appSecret: CONSUMER_SECRET,
-  //   accessToken: twitterMediaDetails.accessToken,
-  //   accessSecret: twitterMediaDetails.refreshToken,
-  // });
-  const client = new TwitterApi(twitterMediaDetails.accessToken);
+  const client = new TwitterApi({
+    appKey: CONSUMER_KEY,
+    appSecret: CONSUMER_SECRET,
+    accessToken: twitterMediaDetails.accessToken,
+    accessSecret: twitterMediaDetails.refreshToken,
+  });
   return client;
 };
 
