@@ -1,5 +1,5 @@
 import { Error as MongooseErrorBase } from 'mongoose';
-import crypto, { randomBytes } from "crypto";
+import  { randomBytes } from "crypto";
 import { v4 as uuidv4 } from 'uuid';
 import CryptoJS from 'crypto-js';
 import type { ISocial } from '@/models/social-media-schema';
