@@ -90,9 +90,8 @@ export const createTwitterPost = async (
           success: undefined,
         };
       }
-      const userResponse = await client.v2.user(twitterMediaDetails.userId as string);
-      console.log(`Twitter user response: ${userResponse}`)
-      // await client.v2.tweet(postText);
+      
+      await client.v2.tweet(postText);
       return {
         error: undefined,
         success: "Tweet sent successfully",

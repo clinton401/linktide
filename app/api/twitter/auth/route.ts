@@ -24,8 +24,9 @@ export async function GET() {
 
     const { url, codeVerifier, state } = twitterClient.generateOAuth2AuthLink(
       REDIRECT_URI,
-      { scope: ['tweet.read', 'tweet.write', 'users.read', 'offline.access'] } 
+      { scope: ['tweet.read', 'tweet.write', 'media.read', 'media.write', 'offline.access'] } 
     );
+    
 
     await TwitterOauthToken.create({ codeVerifier, state,  expiresAt: new Date(Date.now() + 15 * 60 * 1000) });
 
