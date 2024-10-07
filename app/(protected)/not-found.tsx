@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { bodoni } from "@/lib/fonts";
-function NotFoundParent() {
+function NotFoundProtected() {
   return (
-    <section className="w-full flex items-center px-[5%] text-white  flex-col gap-4 justify-center ipad:max-h-[1300px] h-dvh min-h-[500px] ">
+    <section className="w-full flex items-center px-[5%] text-foreground  flex-col gap-4 justify-center ipad:max-h-[1300px] h-dvh min-h-[500px] ">
       <h2
         className={`font-[900]  text-2xl desktop:text-4xl ${bodoni.className}  text-center w-full`}
       >
@@ -20,4 +20,4 @@ function NotFoundParent() {
   );
 }
 
-export default NotFoundParent;
+export default NotFoundProtected;
