@@ -23,12 +23,12 @@ export async function GET() {
     });
 
     const { url, codeVerifier, state } = twitterClient.generateOAuth2AuthLink(
-      REDIRECT_URI,
-      { scope: ['tweet.read', 'tweet.write', 'media.read', 'media.write', 'offline.access'] } 
-    );
-    
+  REDIRECT_URI,
+  { scope: ['tweet.read', 'tweet.write', 'media.read', 'media.write', 'offline.access'] } 
+);
 
-    await TwitterOauthToken.create({ codeVerifier, state,  expiresAt: new Date(Date.now() + 15 * 60 * 1000) });
+
+    await TwitterOauthToken.create({ codeVerifier, state, oauthToken: codeVerifier,  expiresAt: new Date(Date.now() + 15 * 60 * 1000) });
 
    
     return NextResponse.json({ redirectTo: url });
