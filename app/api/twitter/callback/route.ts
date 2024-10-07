@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
   const code = url.searchParams.get("code");
   const state = url.searchParams.get("state");
 
-  // Validate environment variables and query parameters
+
   if (!TWITTER_CLIENT_ID || !TWITTER_CLIENT_SECRET) {
     return NextResponse.redirect(
       new URL(`/analytics/linkedin?error=${encodeURIComponent("Client ID and secret are required")}`, request.url)
@@ -29,7 +29,6 @@ export async function GET(request: NextRequest) {
   try {
     await connectToDatabase();
 
-    // Retrieve the stored codeVerifier using the state
     const tokenRecord = await TwitterOauthToken.findOne({ state, expiresAt: { $gte: new Date() } });
     if (!tokenRecord) {
       return NextResponse.redirect(
@@ -39,35 +38,30 @@ export async function GET(request: NextRequest) {
 
     const { codeVerifier } = tokenRecord;
 
-    // Initialize the Twitter client to exchange the authorization code for tokens
     const twitterClient = new TwitterApi({
       clientId: TWITTER_CLIENT_ID!,
       clientSecret: TWITTER_CLIENT_SECRET!,
     });
 
-    // Exchange authorization code for access token
     const { accessToken, refreshToken, expiresIn } = await twitterClient.loginWithOAuth2({
       code,
       codeVerifier,
       redirectUri: TWITTER_REDIRECT_URI!,
     });
 
-    // Get the authenticated user's information
-    const { client: loggedClient } = await twitterClient.refreshOAuth2Token(refreshToken!); // Refresh if needed
+    const { client: loggedClient } = await twitterClient.refreshOAuth2Token(refreshToken!); 
     const userInfo = await loggedClient.v2.me();
     const userId = userInfo.data.id;
 
-    // Token expiration times (in milliseconds)
-    const expiresAt = Date.now() + expiresIn * 1000;  // Use `expiresIn` for accessToken
-    const refreshTokenExpiresAt = Date.now() + 6 * 30 * 24 * 60 * 60 * 1000; // 6 months for refreshToken
+    const expiresAt = Date.now() + expiresIn * 1000; 
+    const refreshTokenExpiresAt = expiresAt; 
 
-    // Get the logged-in user session
+   
     const session = await getServerUser();
     if (!session || !session.email) {
       return NextResponse.redirect(new URL("/analytics/login", request.url));
     }
 
-    // Find the user in the database
     const user = await findOne({
       email: session.email.toLowerCase(),
     });

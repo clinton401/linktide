@@ -2,7 +2,7 @@ import { connectToDatabase } from "@/lib/db";
 import axios from "axios";
 import { findOne } from "@/data/users-data";
 import type { ISocial } from "@/models/social-media-schema";
-
+import { TwitterApi } from 'twitter-api-v2';
 export const getNewTiktokAccessToken = async (
   REFRESH_TOKEN: string,
   email: string
@@ -88,5 +88,64 @@ export const getNewTiktokAccessToken = async (
   } catch (error) {
     console.error("Failed to refresh access token:", error);
     throw new Error("Failed to refresh access token: ");
+  }
+};
+
+
+
+
+export const refreshTwitterAccessToken = async (refreshToken: string, email: string): Promise<undefined | string> => {
+  const {
+    TWITTER_CLIENT_ID: clientId,
+    TWITTER_CLIENT_SECRET: clientSecret,
+  } = process.env;
+
+  if (!clientId || !clientSecret) {
+    throw new Error('Twitter client ID and secret are not defined');
+  }
+
+  try {
+    const client = new TwitterApi({
+      clientId: clientId,
+      clientSecret: clientSecret,
+    });
+
+    const {  accessToken, refreshToken: newRefreshToken, expiresIn } = await client.refreshOAuth2Token(refreshToken);
+    const refreshTokenExpiresAt = new Date(Date.now() + 60 * 24 * 60 * 60 * 1000);
+
+    console.log('New Access Token:', accessToken);
+    console.log('New Refresh Token:', newRefreshToken);
+    console.log('Expires In:', expiresIn, 'seconds');
+
+    const user = await findOne({ email: email.toLowerCase() });
+
+    if (!user) {
+      console.error("User not found for the provided email.");
+      return undefined;
+    }
+
+    const platform = user.socialMedia?.find((app: ISocial) => app.name === "twitter");
+
+    if (platform) {
+      platform.accessToken = accessToken;
+      platform.expiresAt = expiresIn;
+      platform.refreshToken = newRefreshToken;
+      platform.refreshTokenExpiresAt = refreshTokenExpiresAt;
+    } else {
+      user.socialMedia?.push({
+        name: "twitter",
+        accessToken,
+        expiresAt: expiresIn,
+        refreshToken: newRefreshToken,
+        refreshTokenExpiresAt,
+      });
+    }
+
+    await user.save();
+    // return access_token;
+    return accessToken;
+  } catch (error) {
+    console.error('Error refreshing  twitter access token:', error);
+    throw error;
   }
 };

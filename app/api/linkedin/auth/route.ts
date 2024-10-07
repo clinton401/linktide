@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { generateRandomState } from "@/lib/auth-utils";
 import { CustomError } from "@/lib/custom-error-utils";
 import { NextResponse } from "next/server";

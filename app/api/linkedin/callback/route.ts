@@ -35,16 +35,16 @@ console.log(`Auth state from linkedin: ${state}`)
   try {
     await connectToDatabase();
 
-    // const authState = await LinkedInAuthState.findOne({
-    //   state,
-    //   expiresAt: { $gte: new Date() },
-    // });
-    // console.log(`Auth state: ${JSON.stringify(authState)}`)
-    // if (!authState) {
-    //   return NextResponse.redirect(
-    //     new URL(`/analytics/linkedin?error=Invalid or expired state`, request.url)
-    //   );
-    // }
+    const authState = await LinkedInAuthState.findOne({
+      state,
+      expiresAt: { $gte: new Date() },
+    });
+    console.log(`Auth state: ${JSON.stringify(authState)}`)
+    if (!authState) {
+      return NextResponse.redirect(
+        new URL(`/analytics/linkedin?error=Invalid or expired state`, request.url)
+      );
+    }
 
    
 
