@@ -46,9 +46,23 @@ const mongooseError = (err: MongooseErrorExtended) => {
 
     return;
 };
+const generateRandomNumbers = (numLength = 6) => {
+    const availableNumbers = "0123456789";
+    let randomNumbers = "";
+  
+    for (let i = 0; i < numLength; i++) {
+      const randomIndex = Math.floor(Math.random() * availableNumbers.length);
+      randomNumbers += availableNumbers[randomIndex];
+    }
+    
+    return randomNumbers;
+  };
+  
 
 const otpGenerator = (is10Mins?: boolean) => {
-    const verificationCode = crypto.randomBytes(3).toString('hex').toUpperCase();
+    // const randomNum = Math.floor(100000 + Math.random() * 900000);
+    const verificationCode = generateRandomNumbers();
+
     const additionNumber = is10Mins ? 600000 : 3_600_000;
     const expiresAt = new Date(Date.now() + additionNumber);
 
