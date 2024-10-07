@@ -1,7 +1,7 @@
 "use client";
 import { FC, useState } from "react";
 import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -20,7 +20,7 @@ import { deleteAccount } from "@/actions/delete-account";
 export const LogoutAndDelete: FC = () => {
   const [isLogoutPending, setIsLogoutPending] = useState(false);
   const [isDeletePending, setIsDeletePending] = useState(false);
-  const router = useRouter();
+  // const router = useRouter();
   const { toast } = useToast();
   const handleLogout = async () => {
     try {
