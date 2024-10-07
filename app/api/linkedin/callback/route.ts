@@ -1,7 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 // import AuthState from "@/models/auth-state-schema";
 
-// import LinkedInAuthState from "@/models/linkedin-auth-state-schema";
+import LinkedInAuthState from "@/models/linkedin-auth-state-schema";
 import { connectToDatabase } from "@/lib/db";
 import axios from "axios";
 import { getServerUser } from "@/hooks/get-server-user";
@@ -125,7 +125,7 @@ console.log(`Auth state from linkedin: ${state}`)
     }
 
     await user.save();
-    // await LinkedInAuthState.findByIdAndDelete(authState._id);
+    await LinkedInAuthState.findByIdAndDelete(authState._id);
 
     return NextResponse.redirect(new URL("/analytics/linkedin", request.url));
   } catch (error) {
