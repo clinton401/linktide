@@ -11,18 +11,8 @@ export const PlatformLogoutButton: FC<{name: string}> = ({name}) => {
     const logoutHandler = async() => {
 
         try{
-            setIsPending(false)
-        }catch(error) {
-            console.error("Error logginng out:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Unable to logout, please try again.",
-      });
-        }finally {
-            setIsPending(true)
-        }
-const data = await platformLogout(name);
+            setIsPending(true);
+            const data = await platformLogout(name);
 const {error, success} = data;
 if(error) {
     toast({
@@ -33,12 +23,23 @@ if(error) {
 } 
 if(success) {
     toast({
-        description: " Note: This may take a while. Thank you for your patience!",
+        description: success,
       });
 }
+        }catch(error) {
+            console.error("Error logginng out:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Unable to logout, please try again.",
+      });
+        }finally {
+            setIsPending(false)
+        }
+
     }
     return (
-        <Button disabled={isPending} onClick={logoutHandler} size="lg">
+        <Button disabled={isPending} onClick={logoutHandler} size="lg" variant="secondary">
             {isPending ? <MiniLoader/>: `Logout of ${name}`}
         </Button>
     )
