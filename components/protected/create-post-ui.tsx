@@ -596,7 +596,7 @@ export const CreatePostUI: FC<{session: UserSession | undefined}> = ({session}) 
             createName="Post"
             createIsReady={!isReadyToPost}
           /> */}
-          <Button className="w-[90px]" disabled={!isReadyToPost || isPostLoading} onClick={()=>createPostHandler()}>
+          <Button className="w-[90px]" disabled={!isReadyToPost || isPostLoading || isNewClicked } onClick={()=>createPostHandler()}>
             {isPostLoading &&  <MiniLoader/>}
     {!isPostLoading && isNewClicked && <>{ resetCounter < 10 ? `00:0${resetCounter}` : `00:${resetCounter}`}</>}
 

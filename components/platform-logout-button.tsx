@@ -3,11 +3,12 @@ import {FC, useState} from "react";
 import {Button} from "@/components/ui/button";
 import {MiniLoader} from "@/components/mini-loader";
 import {platformLogout} from "@/actions/platform-logout";
-
+import {useRouter} from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 export const PlatformLogoutButton: FC<{name: string}> = ({name}) => {
     const [isPending, setIsPending] = useState(false);
     const {toast} = useToast();
+    const {refresh} = useRouter();
     const logoutHandler = async() => {
 
         try{
@@ -22,9 +23,11 @@ if(error) {
       });
 } 
 if(success) {
+    
     toast({
         description: success,
       });
+      refresh();
 }
         }catch(error) {
             console.error("Error logginng out:", error);
