@@ -4,6 +4,8 @@ import { RiTwitterXLine } from "react-icons/ri";
 import { bodoni } from "@/lib/fonts";
 import { getSocialAuthState } from "@/hooks/get-social-auth-state";
 import { Button } from "@/components/ui/button";
+
+import {PlatformLogoutButton} from "@/components/platform-logout-button";
 import Link from "next/link";
 export const metadata = {
   title: 'Twitter Analytics Overview',
@@ -39,6 +41,9 @@ const TwitterPage: FC = async () => {
           <Link href="/create-post"> Create post</Link>
         </Button>
       </div>
+      <section className="w-full flex items-center justify-center ">
+        <PlatformLogoutButton name="twitter"/>
+      </section>
     </section>
   );
 };

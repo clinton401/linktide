@@ -13,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {PlatformLogoutButton} from "@/components/platform-logout-button";
 export const metadata = {
   title: 'LinkedIn Analytics Overview',
   description: "Access key insights into your LinkedIn activity with Linktide. View limited analytics and user data on post performance and engagement.",
@@ -81,6 +82,9 @@ const LinkedInPage: FC = async () => {
         are the only metrics available for now. Thank you for your
         understanding!
       </h1>
+      <section className="w-full flex items-center justify-center ">
+        <PlatformLogoutButton name="linkedin"/>
+      </section>
     </section>
   );
 };

@@ -26,6 +26,7 @@ import { Images } from "@/components/images";
 import { MiniLoader } from "@/components/mini-loader";
 import axios from "axios";
 import type { IOauth } from "@/models/oauth-schema";
+import { useCountdown } from "@/hooks/use-countdown";
 type Checked = DropdownMenuCheckboxItemProps["checked"];
 const sectionAnimation = {
   hidden: {
@@ -86,6 +87,11 @@ export const CreatePostUI: FC<{session: UserSession | undefined}> = ({session}) 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoFileInputRef = useRef<HTMLInputElement>(null);
   // const session = useCurrentUser();
+  const {
+    isNewClicked,
+    setIsNewClicked,
+    countdown: resetCounter,
+  } = useCountdown();
   const { push } = useRouter();
   const { toast } = useToast();
   useEffect(() => {
@@ -312,6 +318,7 @@ export const CreatePostUI: FC<{session: UserSession | undefined}> = ({session}) 
   
     try {
       setIsPostLoading(true);
+      setIsNewClicked(false);
       const response = await axios.post('/api/create-post', formData, {
         headers: {
           'Content-Type': 'multipart/form-data', 
@@ -322,8 +329,10 @@ export const CreatePostUI: FC<{session: UserSession | undefined}> = ({session}) 
         toast({
           description: response.data.success || "Post sent successfully!",
         });
+        setIsNewClicked(true)
         discardHandler()
       } else {
+        setIsNewClicked(false);
         toast({
           variant: "destructive",
           title: "Error",
@@ -332,6 +341,7 @@ export const CreatePostUI: FC<{session: UserSession | undefined}> = ({session}) 
       }
     } catch (error) {
       console.error("Error posting:", error);
+      setIsNewClicked(false)
       toast({
         variant: "destructive",
         title: "Error",
@@ -577,10 +587,20 @@ export const CreatePostUI: FC<{session: UserSession | undefined}> = ({session}) 
             isReadyToDiscard={isReadyToDiscard || isPostLoading}
             discardHandler={discardHandler}
           />
-        
+        {/* <RegenerateButton
+            isNewEmailPending={isPostLoading}
+            isResendClicked={isResendClicked}
+            resendCode={createPostHandler}
+            resetCounter={resetCounter}
+            isCreatePage={true}
+            createName="Post"
+            createIsReady={!isReadyToPost}
+          /> */}
           <Button className="w-[90px]" disabled={!isReadyToPost || isPostLoading} onClick={()=>createPostHandler()}>
-            {isPostLoading ? <MiniLoader/> : "Post"}
-            
+            {isPostLoading &&  <MiniLoader/>}
+    {!isPostLoading && isNewClicked && <>{ resetCounter < 10 ? `00:0${resetCounter}` : `00:${resetCounter}`}</>}
+
+{!isPostLoading && !isNewClicked && "Post"}
           </Button>
         </section>
       </div>
