@@ -151,7 +151,7 @@ export const CreatePostUI: FC<{session: UserSession | undefined}> = ({session}) 
     return socialMedia.find((social) => social.name === name);
   };
   const textAreaHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (showTwitter && e.target.value.length > 120) {
+    if (showTwitter && e.target.value.length > 280) {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
@@ -289,7 +289,14 @@ export const CreatePostUI: FC<{session: UserSession | undefined}> = ({session}) 
       });
       return;
     }
-   
+    if (showTwitter && postText.length > 280) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "Your post must be 280 characters or less.",
+      });
+      return;
+    }
    
     toast({
       description: " Note: This may take a while. Thank you for your patience!",
