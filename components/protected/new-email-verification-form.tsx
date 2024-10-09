@@ -11,7 +11,7 @@ import { useSession } from 'next-auth/react';
 export const NewEmailVerificationForm: FC = () => {
     const [error, setError] = useState<undefined | string>(undefined);
     const [success, setSuccess] = useState<undefined | string>(undefined);
-    const [isPending, setIsPending] = useState(false);
+    const [isPending, setIsPending] = useState(true);
     const {id} = useParams();
     
 const { data: session, update } = useSession();
