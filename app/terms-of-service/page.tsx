@@ -1,5 +1,7 @@
 import React from 'react';
 import Link from "next/link";
+
+import {FuzzyOverlay} from "@/components/framer-motion/fuzzy-overlay";
 export const metadata = {
     title: 'Terms of Service',
     description: "Read the terms and conditions that govern the use of Linktide, including user rights, responsibilities, and platform policies.",
@@ -67,6 +69,7 @@ export default function TermsOfService() {
                     <Link href="mailto:clintonphillips464@gmail.com" className="underline ml-1">clintonphillips464@gmail.com</Link>.
                 </p>
             </section>
+            <FuzzyOverlay/>
         </div>
     );
 }
