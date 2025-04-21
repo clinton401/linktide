@@ -7,7 +7,7 @@ import {
 } from "@/lib/mail-html-template";
 import { sendEmail } from "@/lib/mail";
 export const regenerate2faVerificationCode = async (email: string) => {
-  const lowercaseEmail = email.toLowerCase()
+  const lowercaseEmail = email.toLowerCase();
   
   const { verificationCode, expiresAt } = otpGenerator(true);
   try {

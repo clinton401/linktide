@@ -2,13 +2,14 @@
 import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { bodoni } from '@/lib/fonts';
-function ProtectedErrorPage({ error, reset }: { error: Error,  reset: () => void }) {
+function ProtectedErrorPage({ error }: { error: Error,  reset: () => void }) {
     useEffect(() => {
         console.error(`${error}`);
     }, [error]);
     const refreshHandler = () => {
    
-      reset();
+      // reset();
+      window.location.reload()
     }
     return (
       <main className=" min-h-dvh  overflow-hidden relative py-4 px-p-half flex flex-col items-center gap-4 justify-center ">

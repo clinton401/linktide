@@ -18,6 +18,8 @@ const LinkedinAuthStateSchema = new Schema<ILinkedinAuthState>({
     
 }, { collection: 'linkedin-auth-state' });
 
-const LinkedInAuthState = models?.LinkedInAuthState || model<ILinkedinAuthState>("AuthState", LinkedinAuthStateSchema);
+// const LinkedInAuthState = models?.LinkedInAuthState || model<ILinkedinAuthState>("AuthState", LinkedinAuthStateSchema);
+const LinkedInAuthState =
+    models.LinkedInAuthState || model<ILinkedinAuthState>("LinkedInAuthState", LinkedinAuthStateSchema);
 
 export default LinkedInAuthState;

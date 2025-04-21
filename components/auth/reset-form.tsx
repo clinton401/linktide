@@ -50,6 +50,7 @@ export const ResetForm: FC = () => {
       setError(undefined);
       setSuccess(undefined);
     }
+    
   }, [isTyping]);
   const onSubmit = async(values: z.infer<ReturnType<typeof ResetSchema>>) => {
  try{

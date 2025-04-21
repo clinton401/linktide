@@ -73,7 +73,7 @@ const RegisterSchema = z.object({
 
 const OtpSchema = z.object({
   otp: z.string()
-    .trim() // Trims the OTP input
+    .trim() 
     .min(6, { message: "OTP must be at least 6 characters" })
     .max(6, { message: "OTP must be at most 6 characters" }),
 });

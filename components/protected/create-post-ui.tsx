@@ -27,6 +27,8 @@ import { MiniLoader } from "@/components/mini-loader";
 import axios from "axios";
 import type { IOauth } from "@/models/oauth-schema";
 import { useCountdown } from "@/hooks/use-countdown";
+// import { getSocialAuthState } from "@/hooks/get-social-auth-state";
+import useClientSocialAuth from "@/hooks/use-client-social-auth";
 type Checked = DropdownMenuCheckboxItemProps["checked"];
 const sectionAnimation = {
   hidden: {
@@ -297,8 +299,35 @@ export const CreatePostUI: FC<{session: UserSession | undefined}> = ({session}) 
       });
       return;
     }
+
    
-    toast({
+   
+
+  
+    try {
+    const [isTwitterAuth, isLinkedinAuth] = await Promise.all([
+  useClientSocialAuth(getIsSocialAuth("twitter")),
+  useClientSocialAuth(getIsSocialAuth("linkedin")),
+]);
+
+let errorMessage: null | string = null;
+
+if (showTwitter && !isTwitterAuth && showLinkedin && !isLinkedinAuth) {
+  errorMessage = "To post to Twitter and LinkedIn, you need to connect both accounts.";
+} else if (showTwitter && !isTwitterAuth) {
+  errorMessage = "To post to Twitter, connect your Twitter account.";
+} else if (showLinkedin && !isLinkedinAuth) {
+  errorMessage = "To post to LinkedIn, connect your LinkedIn account.";
+}
+if(errorMessage) {
+  return toast({
+        variant: "destructive",
+        title: "Error",
+        description: errorMessage,
+      });
+}
+
+       toast({
       description: " Note: This may take a while. Thank you for your patience!",
     });
 
@@ -321,9 +350,6 @@ export const CreatePostUI: FC<{session: UserSession | undefined}> = ({session}) 
     formData.append('showFacebook', String(showFacebook));
     formData.append('showInstagram', String(showInstagram));
     formData.append('isVideoChosen', String(isVideoChosen));
-
-  
-    try {
       setIsPostLoading(true);
       setIsNewClicked(false);
       const response = await axios.post('/api/create-post', formData, {
@@ -509,12 +535,15 @@ export const CreatePostUI: FC<{session: UserSession | undefined}> = ({session}) 
               <DropdownMenuContent className="w-full min-w-[250px]">
                 <DropdownMenuLabel>Platforms</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-               
 
                 <DropdownMenuCheckboxItem
                   checked={showLinkedin}
                   onCheckedChange={setShowLinkedin}
-                  disabled={getIsSocialAuth("linkedin") ? false : true}
+                  disabled={
+                    useClientSocialAuth(getIsSocialAuth("linkedin"))
+                      ? false
+                      : true
+                  }
                 >
                   Linkedin
                 </DropdownMenuCheckboxItem>
@@ -522,7 +551,11 @@ export const CreatePostUI: FC<{session: UserSession | undefined}> = ({session}) 
                 <DropdownMenuCheckboxItem
                   checked={showTwitter}
                   onCheckedChange={setShowTwitter}
-                  disabled={getIsSocialAuth("twitter") ? false : true}
+                  disabled={
+                    useClientSocialAuth(getIsSocialAuth("twitter"))
+                      ? false
+                      : true
+                  }
                 >
                   Twitter
                 </DropdownMenuCheckboxItem>
@@ -536,14 +569,14 @@ export const CreatePostUI: FC<{session: UserSession | undefined}> = ({session}) 
                 <DropdownMenuCheckboxItem
                   checked={showFacebook}
                   onCheckedChange={setShowFacebook}
-                  disabled={getIsSocialAuth("facebook") ? false : true}
+                  disabled={  useClientSocialAuth(getIsSocialAuth("facebook")) ? false : true}
                 >
                   Facebook
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem
                   checked={showInstagram}
                   onCheckedChange={setShowInstagram}
-                  disabled={getIsSocialAuth("instagram") ? false : true}
+                  disabled={  useClientSocialAuth(getIsSocialAuth("instagram")) ? false : true}
                 >
                   Instagram
                 </DropdownMenuCheckboxItem>
@@ -558,12 +591,9 @@ export const CreatePostUI: FC<{session: UserSession | undefined}> = ({session}) 
             {showInstagram && <Badge variant="outline">Instagram</Badge>}
           </div>
           <p className="text-sm md:text-left w-full text-center">
-          Posting to TikTok, Facebook, and Instagram is currently unavailable
-           
-            </p>
-          {(
-            !getIsSocialAuth("linkedin") ||
-            !getIsSocialAuth("twitter")) && (
+            Posting to TikTok, Facebook, and Instagram is currently unavailable
+          </p>
+          {(!useClientSocialAuth(getIsSocialAuth("linkedin")) || !useClientSocialAuth(getIsSocialAuth("twitter"))) && (
             <p className="text-sm md:text-left text-center">
               To post on more social media platforms, click{" "}
               <span>
@@ -590,11 +620,11 @@ export const CreatePostUI: FC<{session: UserSession | undefined}> = ({session}) 
           />
         </section> */}
         <section className="w-full md:w-[35%] md:py-4 gap-y-4 gap-x-2  md:border-l flex items-center justify-center md:justify-between ">
-        <DiscardAlert
+          <DiscardAlert
             isReadyToDiscard={isReadyToDiscard || isPostLoading}
             discardHandler={discardHandler}
           />
-        {/* <RegenerateButton
+          {/* <RegenerateButton
             isNewEmailPending={isPostLoading}
             isResendClicked={isResendClicked}
             resendCode={createPostHandler}
@@ -603,11 +633,21 @@ export const CreatePostUI: FC<{session: UserSession | undefined}> = ({session}) 
             createName="Post"
             createIsReady={!isReadyToPost}
           /> */}
-          <Button className="w-[90px]" disabled={!isReadyToPost || isPostLoading || isNewClicked } onClick={()=>createPostHandler()}>
-            {isPostLoading &&  <MiniLoader/>}
-    {!isPostLoading && isNewClicked && <>{ resetCounter < 10 ? `00:0${resetCounter}` : `00:${resetCounter}`}</>}
+          <Button
+            className="w-[90px]"
+            disabled={!isReadyToPost || isPostLoading || isNewClicked}
+            onClick={() => createPostHandler()}
+          >
+            {isPostLoading && <MiniLoader />}
+            {!isPostLoading && isNewClicked && (
+              <>
+                {resetCounter < 10
+                  ? `00:0${resetCounter}`
+                  : `00:${resetCounter}`}
+              </>
+            )}
 
-{!isPostLoading && !isNewClicked && "Post"}
+            {!isPostLoading && !isNewClicked && "Post"}
           </Button>
         </section>
       </div>

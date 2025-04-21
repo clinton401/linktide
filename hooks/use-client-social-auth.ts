@@ -1,7 +1,8 @@
-import { getSocialMediaDetails } from "@/hooks/get-social-media-details";
-export const getSocialAuthState = async (name: string) => {
-  const platform = await getSocialMediaDetails(name);
-  if (!platform || !platform?.accessToken || !platform?.expiresAt) return false;
+
+import type { ISocial } from "@/models/social-media-schema";
+
+const useClientSocialAuth = (platform: ISocial | undefined) => {
+     if (!platform || !platform?.accessToken || !platform?.expiresAt) return false;
   const refreshExpire = platform?.refreshTokenExpiresAt
     ? platform.refreshTokenExpiresAt
     : null;
@@ -36,4 +37,6 @@ const refreshExpireDate = refreshExpire ? new Date(refreshExpire) : null;
     // console.log("User auth is not expired");
     return true;
   }
-};
+}
+
+export default useClientSocialAuth;

@@ -5,7 +5,7 @@ import { bodoni } from "@/lib/fonts";
 
 function AnalyticsErrorPage({
   error,
-  reset,
+  
 }: {
   error: Error;
   reset: () => void;
@@ -15,8 +15,7 @@ function AnalyticsErrorPage({
   }, [error]);
   const refreshHandler = () => {
     
-
-    reset();
+window.location.reload()
   };
   return (
     <main className=" min-h-dvh  overflow-hidden relative py-4 px-p-half flex flex-col items-center gap-4 justify-center ">

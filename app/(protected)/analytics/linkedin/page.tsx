@@ -13,10 +13,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {PlatformLogoutButton} from "@/components/platform-logout-button";
+import { PlatformLogoutButton } from "@/components/platform-logout-button";
 export const metadata = {
-  title: 'LinkedIn Analytics Overview',
-  description: "Access key insights into your LinkedIn activity with Linktide. View limited analytics and user data on post performance and engagement.",
+  title: "LinkedIn Analytics Overview",
+  description:
+    "Access key insights into your LinkedIn activity with Linktide. View limited analytics and user data on post performance and engagement.",
 };
 
 const LinkedInPage: FC = async () => {
@@ -64,7 +65,7 @@ const LinkedInPage: FC = async () => {
             )}{" "}
           </CardContent>
         </Card>
-       
+
         <div className="w-full md:w-1/2 flex items-center justify-center">
           <Avatar className="w-[100px] h-[100px]">
             <AvatarImage
@@ -81,9 +82,10 @@ const LinkedInPage: FC = async () => {
         LinkedIn does not provide additional analytics data at the moment. These
         are the only metrics available for now. Thank you for your
         understanding!
+
       </h1>
       <section className="w-full flex items-center justify-center ">
-        <PlatformLogoutButton name="linkedin"/>
+        <PlatformLogoutButton name="linkedin" />
       </section>
     </section>
   );

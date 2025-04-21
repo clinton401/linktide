@@ -60,7 +60,7 @@ export const register = async (values: z.infer<typeof RegisterSchema>, redirect:
     await sendEmail(lowercaseEmail, subject, text, html);
       return {
         success: "User created successfully!. Verification code sent to your email",
-        redirectUrl: `/auth/verify-email/${newUser._id}${redirect ? `?redirect=${encodeURIComponent(redirect)}`: ""}`,
+        redirectUrl: `/auth/verify-email/${newUser.id}${redirect ? `?redirect=${encodeURIComponent(redirect)}`: ""}`,
         error: undefined
       };
 

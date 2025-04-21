@@ -4,14 +4,14 @@ import { Button } from '@/components/ui/button';
 import { bodoni } from '@/lib/fonts';
 import {FuzzyOverlay} from "@/components/framer-motion/fuzzy-overlay"
 
-function ErrorPage({ error, reset }: { error: Error,  reset: () => void }) {
+function ErrorPage({ error }: { error: Error,  reset: () => void }) {
   
     useEffect(() => {
         console.error(`${error}`);
     }, [error]);
     const refreshHandler = () => {
   
-      reset();
+     window.location.reload()
     }
     return (
       <main className=" min-h-dvh  overflow-hidden relative py-4 px-p-half flex flex-col items-center gap-4 justify-center ">
