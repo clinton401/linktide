@@ -88,6 +88,16 @@ export const CreatePostUI: FC<{session: UserSession | undefined}> = ({session}) 
   const [isPostLoading, setIsPostLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoFileInputRef = useRef<HTMLInputElement>(null);
+  
+  const socialMedia = session?.socialMedia;
+  const getIsSocialAuth = (name: string): ISocial | undefined => {
+    if (!socialMedia) {
+      return undefined;
+    }
+    return socialMedia.find((social) => social.name === name);
+  };
+  const isTwitterAuth = useClientSocialAuth(getIsSocialAuth("twitter"))
+  const isLinkedinAuth = useClientSocialAuth(getIsSocialAuth("linkedin"))
   // const session = useCurrentUser();
   const {
     isNewClicked,
@@ -142,16 +152,10 @@ export const CreatePostUI: FC<{session: UserSession | undefined}> = ({session}) 
     push("/auth/login");
     return;
   }
-  const socialMedia = session.socialMedia;
   const changeImageSection = (changeValue: boolean) => {
     setIsImageSection(changeValue);
   };
-  const getIsSocialAuth = (name: string): ISocial | undefined => {
-    if (!socialMedia) {
-      return undefined;
-    }
-    return socialMedia.find((social) => social.name === name);
-  };
+  
   const textAreaHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (showTwitter && e.target.value.length > 280) {
       toast({
@@ -305,11 +309,7 @@ export const CreatePostUI: FC<{session: UserSession | undefined}> = ({session}) 
 
   
     try {
-    const [isTwitterAuth, isLinkedinAuth] = await Promise.all([
-  useClientSocialAuth(getIsSocialAuth("twitter")),
-  useClientSocialAuth(getIsSocialAuth("linkedin")),
-]);
-
+  
 let errorMessage: null | string = null;
 
 if (showTwitter && !isTwitterAuth && showLinkedin && !isLinkedinAuth) {
@@ -540,7 +540,7 @@ if(errorMessage) {
                   checked={showLinkedin}
                   onCheckedChange={setShowLinkedin}
                   disabled={
-                    useClientSocialAuth(getIsSocialAuth("linkedin"))
+                    isLinkedinAuth
                       ? false
                       : true
                   }
@@ -552,7 +552,7 @@ if(errorMessage) {
                   checked={showTwitter}
                   onCheckedChange={setShowTwitter}
                   disabled={
-                    useClientSocialAuth(getIsSocialAuth("twitter"))
+                    isTwitterAuth
                       ? false
                       : true
                   }
@@ -569,14 +569,14 @@ if(errorMessage) {
                 <DropdownMenuCheckboxItem
                   checked={showFacebook}
                   onCheckedChange={setShowFacebook}
-                  disabled={  useClientSocialAuth(getIsSocialAuth("facebook")) ? false : true}
+                  disabled={ true}
                 >
                   Facebook
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem
                   checked={showInstagram}
                   onCheckedChange={setShowInstagram}
-                  disabled={  useClientSocialAuth(getIsSocialAuth("instagram")) ? false : true}
+                  disabled={ true}
                 >
                   Instagram
                 </DropdownMenuCheckboxItem>
@@ -593,7 +593,7 @@ if(errorMessage) {
           <p className="text-sm md:text-left w-full text-center">
             Posting to TikTok, Facebook, and Instagram is currently unavailable
           </p>
-          {(!useClientSocialAuth(getIsSocialAuth("linkedin")) || !useClientSocialAuth(getIsSocialAuth("twitter"))) && (
+          {(!isLinkedinAuth || !isTwitterAuth) && (
             <p className="text-sm md:text-left text-center">
               To post on more social media platforms, click{" "}
               <span>
