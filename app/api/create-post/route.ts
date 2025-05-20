@@ -6,13 +6,7 @@ import { createTwitterPost } from "@/actions/create-twitter-post";
 
 import { rateLimit } from "@/lib/rate-limit";
 
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '100mb', 
-    },
-  },
-};
+
 
 
 export async function POST(req: Request) {
