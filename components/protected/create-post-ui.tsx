@@ -221,12 +221,12 @@ export const CreatePostUI: FC<{session: UserSession | undefined}> = ({session}) 
       return;
     }
   
-    const maxSizeInBytes = 500 * 1024 * 1024; 
+    const maxSizeInBytes = 50 * 1024 * 1024; 
     if (selectedVideo.size > maxSizeInBytes) {
       toast({
         variant: "destructive",
         title: "File too large.",
-        description: "The video must be less than 500 MB.",
+        description: "The video must be less than 50 MB.",
       });
       return;
     }
@@ -299,6 +299,28 @@ export const CreatePostUI: FC<{session: UserSession | undefined}> = ({session}) 
     setPostText("");
   };
  
+  const MAX_VIDEO_SIZE_MB = 50;
+const MAX_IMAGE_SIZE_MB = 10;
+
+function validateFiles(videoFile: File | undefined, imageFiles: File[]): string | null {
+  if (videoFile) {
+    const videoSizeMB = videoFile.size / (1024 * 1024);
+    if (videoSizeMB > MAX_VIDEO_SIZE_MB) {
+      return `Video file exceeds ${MAX_VIDEO_SIZE_MB}MB limit.`;
+    }
+  }
+
+  for (let i = 0; i < imageFiles.length; i++) {
+    const image = imageFiles[i];
+    const imageSizeMB = image.size / (1024 * 1024);
+    if (imageSizeMB > MAX_IMAGE_SIZE_MB) {
+      return `Image ${i + 1} exceeds ${MAX_IMAGE_SIZE_MB}MB limit.`;
+    }
+  }
+
+  return null; 
+}
+
   const createPostHandler = async () => {
     if (!isReadyToPost) {
       toast({
@@ -339,6 +361,17 @@ if(errorMessage) {
         description: errorMessage,
       });
 }
+
+      const validateError = validateFiles(video, imagesArray);
+      if (validateError) {
+        
+          return toast({
+            variant: "destructive",
+            title: "Error",
+            description: validateError,
+          });
+        
+      }
 
        toast({
       description: " Note: This may take a while. Thank you for your patience!",
