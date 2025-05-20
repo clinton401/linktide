@@ -4,11 +4,10 @@ import { getServerUser } from "@/hooks/get-server-user";
 import { createLinkedinPost } from "@/actions/create-linkedin-post";
 import { createTwitterPost } from "@/actions/create-twitter-post";
 
-import { rateLimit } from "@/lib/rate-limit";
+// import { rateLimit } from "@/lib/rate-limit";
 
 
-export const runtime = 'edge';
-export const dynamic = 'force-dynamic';
+
 
 export async function POST(req: Request) {
   try {
@@ -22,13 +21,13 @@ export async function POST(req: Request) {
       );
     }
 
- const { error } = rateLimit(session.id, true);
-    if(error){
-      return NextResponse.json(
-        { error },
-        { status: 403 }
-      );
-    }
+//  const { error } = rateLimit(session.id, true);
+//     if(error){
+//       return NextResponse.json(
+//         { error },
+//         { status: 403 }
+//       );
+//     }
 
     const imagesArray: File[] = data.getAll('imagesArray') as File[];
     const videoFile: File | null = data.get('video') as File | null;
