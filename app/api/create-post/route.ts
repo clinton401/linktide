@@ -7,7 +7,8 @@ import { createTwitterPost } from "@/actions/create-twitter-post";
 import { rateLimit } from "@/lib/rate-limit";
 
 
-
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
   try {
