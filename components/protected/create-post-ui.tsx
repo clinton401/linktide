@@ -28,12 +28,13 @@ import Link from "next/link";
 import { Switch } from "@/components/ui/switch";
 import { Images } from "@/components/images";
 import { MiniLoader } from "@/components/mini-loader";
-import axios from "axios";
+// import axios from "axios";
 import type { IOauth } from "@/models/oauth-schema";
 // import { useCountdown } from "@/hooks/use-countdown";
 // import { getSocialAuthState } from "@/hooks/get-social-auth-state";
 import useClientSocialAuth from "@/hooks/use-client-social-auth";
 import { generateText } from "@/actions/generate-text";
+import { createPost } from "@/actions/create-post";
 type Checked = DropdownMenuCheckboxItemProps["checked"];
 const sectionAnimation = {
   hidden: {
@@ -221,12 +222,12 @@ export const CreatePostUI: FC<{session: UserSession | undefined}> = ({session}) 
       return;
     }
   
-    const maxSizeInBytes = 50 * 1024 * 1024; 
+    const maxSizeInBytes = 500 * 1024 * 1024; 
     if (selectedVideo.size > maxSizeInBytes) {
       toast({
         variant: "destructive",
         title: "File too large.",
-        description: "The video must be less than 50 MB.",
+        description: "The video must be less than 500 MB.",
       });
       return;
     }
@@ -299,7 +300,7 @@ export const CreatePostUI: FC<{session: UserSession | undefined}> = ({session}) 
     setPostText("");
   };
  
-  const MAX_VIDEO_SIZE_MB = 50;
+  const MAX_VIDEO_SIZE_MB = 500;
 const MAX_IMAGE_SIZE_MB = 10;
 
 function validateFiles(videoFile: File | undefined, imageFiles: File[]): string | null {
@@ -397,42 +398,57 @@ if(errorMessage) {
     formData.append('showInstagram', String(showInstagram));
     formData.append('isVideoChosen', String(isVideoChosen));
       setIsPostLoading(true);
-      // setIsNewClicked(false);
-      const response = await axios.post('/api/create-post', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data', 
-        },
-      })
-  
-      if (response.data.success) {
-        toast({
-          description: response.data.success || "Post sent successfully!",
-        });
-        // setIsNewClicked(true)
-        discardHandler()
-      } else {
-        // setIsNewClicked(false);
-        toast({
+
+      const res = await createPost(formData);
+      const { error, message } = res;
+
+      if (error) {
+       return toast({
           variant: "destructive",
           title: "Error",
-          description: response.data.error || "Unable to post, please try again.",
+          description: error,
         });
       }
+
+      toast({
+        description: message || "Post sent successfully!",
+      });
+      // setIsNewClicked(false);
+      // const response = await axios.post('/api/create-post', formData, {
+      //   headers: {
+      //     'Content-Type': 'multipart/form-data', 
+      //   },
+      // })
+  
+      // if (response.data.success) {
+      //   toast({
+      //     description: response.data.success || "Post sent successfully!",
+      //   });
+      //   // setIsNewClicked(true)
+      //   discardHandler()
+      // } else {
+      //   // setIsNewClicked(false);
+      //   toast({
+      //     variant: "destructive",
+      //     title: "Error",
+      //     description: response.data.error || "Unable to post, please try again.",
+      //   });
+      // }
     } catch (error) {
       console.error("Error posting:", error);
-      if(axios.isAxiosError(error) && error.response){
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: error.response.data?.error || "Unable to post, please try again.",
-        });
-      }else {
+      // if(axios.isAxiosError(error) && error.response){
+      //   toast({
+      //     variant: "destructive",
+      //     title: "Error",
+      //     description: error.response.data?.error || "Unable to post, please try again.",
+      //   });
+      // }else {
         toast({
           variant: "destructive",
           title: "Error",
           description: "Unable to post, please try again.",
         });
-      }
+      // }
       // setIsNewClicked(false)
       
     } finally {
