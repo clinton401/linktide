@@ -1,5 +1,5 @@
 import { ParentLayout } from "@/components/protected/parent-layout";
-import {ThemeProvider} from "@/components/theme-provider"
+import { ThemeProvider } from "@/components/theme-provider";
 
 export default function ProtectedLayout({
   children,

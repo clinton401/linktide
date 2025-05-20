@@ -4,6 +4,7 @@ import { SessionProvider } from "next-auth/react";
 import { Oswald } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster"
 import {auth} from "@/auth";
+import { Analytics } from "@vercel/analytics/next";
 const oswald = Oswald({ subsets: ["latin"], weight: ["300" , "400" , "500" , "600" , "700" ] });
 
 
@@ -55,18 +56,14 @@ export default async function RootLayout({
   const session = await auth();
   return (
     <SessionProvider session={session}>
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${oswald.className}  antialiased`}
-        id="body"
-      >
-          
-            {children}
+      <html lang="en" suppressHydrationWarning>
+        <body className={`${oswald.className}  antialiased`} id="body">
+          {children}
           <Toaster />
-       
-    
-      </body>
-    </html>
+
+          <Analytics />
+        </body>
+      </html>
     </SessionProvider>
   );
 }

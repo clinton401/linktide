@@ -14,7 +14,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
-// import { useCurrentUser } from "@/hooks/use-current-user";
+import {
+  Sparkles,
+  ThumbsUp,
+  RotateCcw,
+} from "lucide-react"
 import { useRouter } from "next/navigation";
 import type { ISocial } from "@/models/social-media-schema";
 import { DiscardAlert } from "@/components/protected/discard-alert";
@@ -26,9 +30,10 @@ import { Images } from "@/components/images";
 import { MiniLoader } from "@/components/mini-loader";
 import axios from "axios";
 import type { IOauth } from "@/models/oauth-schema";
-import { useCountdown } from "@/hooks/use-countdown";
+// import { useCountdown } from "@/hooks/use-countdown";
 // import { getSocialAuthState } from "@/hooks/get-social-auth-state";
 import useClientSocialAuth from "@/hooks/use-client-social-auth";
+import { generateText } from "@/actions/generate-text";
 type Checked = DropdownMenuCheckboxItemProps["checked"];
 const sectionAnimation = {
   hidden: {
@@ -85,6 +90,10 @@ export const CreatePostUI: FC<{session: UserSession | undefined}> = ({session}) 
   const [videoPreviewUrl, setVideoPreviewUrl] = useState<string | undefined>(
     undefined
   );
+  const [isEnhanced, setIsEnhanced] = useState(false);
+  const [isEnhancing, setIsEnhancing] = useState(false);
+  const [enhanceAccepted, setEnhanceAccepted] = useState(false);
+  const [originalContent, setOriginalContent] = useState("");
   const [isPostLoading, setIsPostLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoFileInputRef = useRef<HTMLInputElement>(null);
@@ -99,11 +108,11 @@ export const CreatePostUI: FC<{session: UserSession | undefined}> = ({session}) 
   const isTwitterAuth = useClientSocialAuth(getIsSocialAuth("twitter"))
   const isLinkedinAuth = useClientSocialAuth(getIsSocialAuth("linkedin"))
   // const session = useCurrentUser();
-  const {
-    isNewClicked,
-    setIsNewClicked,
-    countdown: resetCounter,
-  } = useCountdown();
+  // const {
+  //   isNewClicked,
+  //   setIsNewClicked,
+  //   countdown: resetCounter,
+  // } = useCountdown();
   const { push } = useRouter();
   const { toast } = useToast();
   useEffect(() => {
@@ -164,7 +173,11 @@ export const CreatePostUI: FC<{session: UserSession | undefined}> = ({session}) 
         description: "Your post must be 280 characters or less.",
       });
     } else {
+
       setPostText(e.target.value);
+      if(enhanceAccepted){
+        setEnhanceAccepted(false);
+      }
     }
   };
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -351,7 +364,7 @@ if(errorMessage) {
     formData.append('showInstagram', String(showInstagram));
     formData.append('isVideoChosen', String(isVideoChosen));
       setIsPostLoading(true);
-      setIsNewClicked(false);
+      // setIsNewClicked(false);
       const response = await axios.post('/api/create-post', formData, {
         headers: {
           'Content-Type': 'multipart/form-data', 
@@ -362,10 +375,10 @@ if(errorMessage) {
         toast({
           description: response.data.success || "Post sent successfully!",
         });
-        setIsNewClicked(true)
-        discardHandler()
+        // setIsNewClicked(true)
+        // discardHandler()
       } else {
-        setIsNewClicked(false);
+        // setIsNewClicked(false);
         toast({
           variant: "destructive",
           title: "Error",
@@ -374,16 +387,96 @@ if(errorMessage) {
       }
     } catch (error) {
       console.error("Error posting:", error);
-      setIsNewClicked(false)
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Unable to post, please try again.",
-      });
+      if(axios.isAxiosError(error) && error.response){
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: error.response.data?.error || "Unable to post, please try again.",
+        });
+      }else {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Unable to post, please try again.",
+        });
+      }
+      // setIsNewClicked(false)
+      
     } finally {
       setIsPostLoading(false);
     }
   };
+
+  const handleEnhanceContent = async () => {
+    if (!postText.trim() || postText.trim().length < 100) {
+      toast({
+        title: "Post too short",
+        description: "Please enter at least 100 characters before enhancing your content.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+
+    setOriginalContent(postText)
+   
+
+   
+
+    try{
+      setIsEnhancing(true);
+
+      const response = await generateText(postText, showTwitter);
+      const {error, prompt} = response;
+
+      if(error || !prompt){
+        return  toast({
+          variant: "destructive",
+          title: "Error",
+          description: error || "Failed to generate text",
+        });
+      }
+
+      setPostText(prompt)
+
+      setIsEnhanced(true);
+
+      toast({
+        title: "Content enhanced!",
+        description: "Your post has been enhanced with AI.",
+      })
+    }catch(error){
+      console.error(`Error generating text: ${error}`);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to generate content.",
+      });
+    }finally {
+      setIsEnhancing(false)
+    }
+  }
+
+
+  const handleAccept = () => {
+    setIsEnhanced(false);
+    setOriginalContent("");
+    setEnhanceAccepted(true)
+    toast({
+      title: "Enhanced version accepted",
+      description: "You're now using the AI-enhanced version.",
+    }) 
+  }
+
+  const handleReject = () => {
+    setPostText(originalContent)
+    setIsEnhanced(false);
+    setOriginalContent("");
+    toast({
+      title: "Enhanced version rejected",
+      description: "Reverted to your original version.",
+    })
+  }
 
   return (
     <>
@@ -502,15 +595,54 @@ if(errorMessage) {
               animate={"visible"}
               exit="exit"
               key="section-animation-two"
-              className="  w-full flex"
+              className="  w-full  flex-col gap-8 flex"
             >
               <Textarea
                 onChange={textAreaHandler}
                 value={postText}
+                disabled={isPostLoading || isEnhancing}
                 spellCheck="false"
                 placeholder="Type your message here."
-                className="max-h-[4500px] min-h-[200px]"
+                className="max-h-[4500px] min-h-[200px] "
               />
+
+              {!enhanceAccepted && (
+                <div className="w-full flex items-center gap-2 justify-end">
+                  {/* div className="flex items-center gap-2"> */}
+                  {isEnhanced ? (
+                    <>
+                      <Button
+                        disabled={isEnhancing || isPostLoading}
+                        variant="outline"
+                        size="sm"
+                        onClick={handleReject}
+                        className="h-8 border-red-200 hover:border-red-300 dark:border-red-900 dark:hover:border-red-800"
+                      >
+                        <RotateCcw className="h-3.5 w-3.5 mr-1 text-red-500" />
+                        Revert
+                      </Button>
+                      <Button
+                        disabled={isEnhancing || isPostLoading}
+                        size="sm"
+                        onClick={handleAccept}
+                        className="h-8 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700"
+                      >
+                        <ThumbsUp className="h-3.5 w-3.5 mr-1" />
+                        Keep
+                      </Button>
+                    </>
+                  ) : (
+                    <Button
+                      onClick={handleEnhanceContent}
+                      disabled={isPostLoading || isEnhancing || !postText.trim()}
+                      className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700"
+                    >
+                      <Sparkles className="h-4 w-4 mr-2" />
+                      {isEnhancing ? "Enhancing..." : "Enhance with AI"}
+                    </Button>
+                  )}
+                </div>
+              )}
             </motion.div>
           )}
         </section>
@@ -539,11 +671,7 @@ if(errorMessage) {
                 <DropdownMenuCheckboxItem
                   checked={showLinkedin}
                   onCheckedChange={setShowLinkedin}
-                  disabled={
-                    isLinkedinAuth
-                      ? false
-                      : true
-                  }
+                  disabled={isLinkedinAuth ? false : true}
                 >
                   Linkedin
                 </DropdownMenuCheckboxItem>
@@ -551,11 +679,7 @@ if(errorMessage) {
                 <DropdownMenuCheckboxItem
                   checked={showTwitter}
                   onCheckedChange={setShowTwitter}
-                  disabled={
-                    isTwitterAuth
-                      ? false
-                      : true
-                  }
+                  disabled={isTwitterAuth ? false : true}
                 >
                   Twitter
                 </DropdownMenuCheckboxItem>
@@ -569,14 +693,14 @@ if(errorMessage) {
                 <DropdownMenuCheckboxItem
                   checked={showFacebook}
                   onCheckedChange={setShowFacebook}
-                  disabled={ true}
+                  disabled={true}
                 >
                   Facebook
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem
                   checked={showInstagram}
                   onCheckedChange={setShowInstagram}
-                  disabled={ true}
+                  disabled={true}
                 >
                   Instagram
                 </DropdownMenuCheckboxItem>
@@ -621,7 +745,7 @@ if(errorMessage) {
         </section> */}
         <section className="w-full md:w-[35%] md:py-4 gap-y-4 gap-x-2  md:border-l flex items-center justify-center md:justify-between ">
           <DiscardAlert
-            isReadyToDiscard={isReadyToDiscard || isPostLoading}
+            isReadyToDiscard={isReadyToDiscard || isPostLoading || isEnhancing }
             discardHandler={discardHandler}
           />
           {/* <RegenerateButton
@@ -635,19 +759,15 @@ if(errorMessage) {
           /> */}
           <Button
             className="w-[90px]"
-            disabled={!isReadyToPost || isPostLoading || isNewClicked}
+            disabled={
+              !isReadyToPost || isPostLoading  || isEnhancing
+            }
             onClick={() => createPostHandler()}
           >
             {isPostLoading && <MiniLoader />}
-            {!isPostLoading && isNewClicked && (
-              <>
-                {resetCounter < 10
-                  ? `00:0${resetCounter}`
-                  : `00:${resetCounter}`}
-              </>
-            )}
+          
 
-            {!isPostLoading && !isNewClicked && "Post"}
+            {!isPostLoading  && "Post"}
           </Button>
         </section>
       </div>

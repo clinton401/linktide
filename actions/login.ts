@@ -15,6 +15,8 @@ import {
   generateVerificationEmailHtml,
   generate2FAEmailHtml,
 } from "@/lib/mail-html-template";
+import { rateLimit } from "@/lib/rate-limit";
+import getUserIpAddress from "@/hooks/get-user-ip-address";
 export const login = async (
   values: z.infer<typeof LoginSchema>,
   redirect: string | null,
@@ -28,6 +30,13 @@ export const login = async (
       redirectUrl: undefined,
     };
   }
+  const userIp = await getUserIpAddress();
+  const { error } = rateLimit(userIp, false);
+  if(error)  return {
+    error,
+    success: undefined,
+    redirectUrl: undefined,
+  };
 
   const { twoFA, email, password } = validatedFields.data;
   const lowercaseEmail = email.toLowerCase();

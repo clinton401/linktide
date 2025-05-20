@@ -12,6 +12,8 @@ import User from "@/models/user-schema";
 import {
   generateVerificationEmailHtml,
 } from "@/lib/mail-html-template";
+import { rateLimit } from "@/lib/rate-limit";
+import getUserIpAddress from "@/hooks/get-user-ip-address";
 type RegisterType = {
   error: string | Record<string, string | undefined> | undefined;
   success: string | undefined;
@@ -26,6 +28,13 @@ export const register = async (values: z.infer<typeof RegisterSchema>, redirect:
       redirectUrl: undefined
     };
   }
+  const userIp = await getUserIpAddress();
+  const { error } = rateLimit(userIp, false);
+  if(error)  return {
+    error,
+    success: undefined,
+    redirectUrl: undefined
+  };
   try {
     await connectToDatabase();
     const { email, name, password } = validatedFields.data;
@@ -73,13 +82,7 @@ export const register = async (values: z.infer<typeof RegisterSchema>, redirect:
         redirectUrl: undefined
       };
     }
-    if (err instanceof Error) {
-      return {
-        error: err.message,
-        success: undefined,
-        redirectUrl: undefined
-      };
-    }
+  
     return {
       error: "An unknown error occurred.",
       success: undefined,

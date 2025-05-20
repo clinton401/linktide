@@ -7,6 +7,8 @@ import {
     generateVerificationEmailHtml,
   } from "@/lib/mail-html-template";
 import { sendEmail } from "@/lib/mail";
+import { rateLimit } from "@/lib/rate-limit";
+import getUserIpAddress from "@/hooks/get-user-ip-address";
 export const regenerateEmailVerificationCode = async (userId: string, redirect: string | null) => {
   if (!userId || !Types.ObjectId.isValid(userId)) {
     return {
@@ -15,6 +17,13 @@ export const regenerateEmailVerificationCode = async (userId: string, redirect: 
       redirectUrl: undefined,
     };
   }
+    const userIp = await getUserIpAddress();
+    const { error } = rateLimit(userIp, false);
+    if(error)  return {
+      error,
+      success: undefined,
+      redirectUrl: undefined,
+    };
   const validId = new Types.ObjectId(userId);
   const { verificationCode, expiresAt } = otpGenerator();
   try {
@@ -62,13 +71,7 @@ export const regenerateEmailVerificationCode = async (userId: string, redirect: 
     };
   } catch (err) {
     console.error(`error while regenerating email verification code: ${err}`);
-    if (err instanceof Error) {
-      return {
-        error: err.message,
-        success: undefined,
-        redirectUrl: undefined,
-      };
-    }
+  
     return {
       error: "An unknown error occurred.",
       success: undefined,

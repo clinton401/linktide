@@ -4,6 +4,8 @@ import { findById } from "@/data/users-data";
 import { OtpSchema } from "@/schemas";
 import { Types } from "mongoose";
 import { connectToDatabase } from "@/lib/db";
+import { rateLimit } from "@/lib/rate-limit";
+import getUserIpAddress from "@/hooks/get-user-ip-address";
 
 export const verifyEmail = async (
   values: z.infer<typeof OtpSchema>,
@@ -18,13 +20,21 @@ export const verifyEmail = async (
       redirectUrl: undefined,
     };
   }
+
   if(!userId || !Types.ObjectId.isValid(userId)) {
     return {
-      error: "Invalid code",
+      error: "Invalid userId",
       success: undefined,
       redirectUrl: undefined,
     };
   }
+  const userIp = await getUserIpAddress();
+  const { error } = rateLimit(userIp, false);
+  if (error) return {
+    error,
+    success: undefined,
+    redirectUrl: undefined
+  };
   const validId = new Types.ObjectId(userId);
   const { otp } = validatedFields.data;
   
@@ -89,13 +99,7 @@ export const verifyEmail = async (
     };
   } catch (err) {
     console.error(`error while verifying email ${err}`);
-    if (err instanceof Error) {
-      return {
-        error: err.message,
-        success: undefined,
-        redirectUrl: undefined,
-      };
-    }
+  
     return {
       error: "An unknown error occurred.",
       success: undefined,

@@ -10,7 +10,9 @@ import ResetPassword from "@/models/reset-password-schema";
 import {validatePassword} from "@/lib/password-utils"
 import {
     generateResetEmailHtml
-  } from "@/lib/mail-html-template";
+} from "@/lib/mail-html-template";
+import { rateLimit } from "@/lib/rate-limit";
+import getUserIpAddress from "@/hooks/get-user-ip-address";
 export const reset = async (
   values: z.infer<ReturnType<typeof ResetSchema>>,
   isCodeSent: boolean,
@@ -25,6 +27,14 @@ export const reset = async (
       isOtpSent: false
     };
   }
+  const userIp = await getUserIpAddress();
+  const { error } = rateLimit(userIp, false);
+  if(error)  return {
+    error,
+    success: undefined,
+    redirectUrl: undefined,
+    isOtpSent: false
+  };
 
   const { email, otp, newPassword } = validatedFields.data;
   const { verificationCode, expiresAt } = otpGenerator();
@@ -169,14 +179,7 @@ try{
   };
 } catch(err) {
     console.error(`error while resetting password: ${err}`)
-    if (err instanceof Error) {
-        return {
-          error: err.message,
-          success: undefined,
-          redirectUrl: undefined,
-          isOtpSent: false
-        };
-      }
+   
       return {
         error: "An unknown error occurred.",
         success: undefined,

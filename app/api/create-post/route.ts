@@ -4,6 +4,7 @@ import { getServerUser } from "@/hooks/get-server-user";
 import { createLinkedinPost } from "@/actions/create-linkedin-post";
 import { createTwitterPost } from "@/actions/create-twitter-post";
 
+import { rateLimit } from "@/lib/rate-limit";
 
 
 
@@ -11,7 +12,22 @@ import { createTwitterPost } from "@/actions/create-twitter-post";
 export async function POST(req: Request) {
   try {
     const data = await req.formData();
+    const session = await getServerUser();
 
+    if (!session) {
+      return NextResponse.json(
+        { error: "User not allowed to view this resource" },
+        { status: 403 }
+      );
+    }
+
+ const { error } = rateLimit(session.id, true);
+    if(error){
+      return NextResponse.json(
+        { error },
+        { status: 403 }
+      );
+    }
 
     const imagesArray: File[] = data.getAll('imagesArray') as File[];
     const videoFile: File | null = data.get('video') as File | null;
@@ -70,14 +86,7 @@ if(showInstagram) {
     amountOfPlatforms++
 }
 
-    const session = await getServerUser();
-
-    if (!session) {
-      return NextResponse.json(
-        { error: "User not allowed to view this resource" },
-        { status: 403 }
-      );
-    }
+    
 
     const isNoPostData = postText.length < 1 && imagesArray.length < 1 && !videoFile;
     const isNoPlatformChosen =

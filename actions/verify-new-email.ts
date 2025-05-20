@@ -2,8 +2,17 @@
 import { findOne } from "@/data/users-data";
 import { connectToDatabase } from "@/lib/db";
 import NewEmail from "@/models/new-email-schema";
+import { rateLimit } from "@/lib/rate-limit";
+import getUserIpAddress from "@/hooks/get-user-ip-address";
 
 export const verifyNewEmail = async (verificationCode: string) => {
+  const userIp = await getUserIpAddress();
+  const { error } = rateLimit(userIp, false);
+  if (error) return {
+    error,
+    success: undefined,
+    new_email: undefined
+  };
   try {
     await connectToDatabase();
     const foundUser = await NewEmail.findOne({ verificationCode });
@@ -54,13 +63,7 @@ export const verifyNewEmail = async (verificationCode: string) => {
     };
   } catch (err) {
     console.error(`Error while changing user email: ${err}`);
-    if (err instanceof Error) {
-      return {
-        error: err.message,
-        success: undefined,
-        new_email: undefined
-      };
-    }
+   
     return {
       error: "An unknown error occurred, and Your email has not changed",
       success: undefined,

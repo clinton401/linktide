@@ -6,9 +6,17 @@ import {
   generate2FAEmailHtml
 } from "@/lib/mail-html-template";
 import { sendEmail } from "@/lib/mail";
+import { rateLimit } from "@/lib/rate-limit";
+import getUserIpAddress from "@/hooks/get-user-ip-address";
 export const regenerate2faVerificationCode = async (email: string) => {
   const lowercaseEmail = email.toLowerCase();
-  
+  const userIp = await getUserIpAddress();
+  const { error } = rateLimit(userIp, false);
+  if(error)  return {
+    error,
+    success: undefined
+  };
+
   const { verificationCode, expiresAt } = otpGenerator(true);
   try {
     await connectToDatabase();
@@ -37,12 +45,7 @@ export const regenerate2faVerificationCode = async (email: string) => {
     };
   } catch (err) {
     console.error(`error while regenerating 2fa verification code: ${err}`);
-    if (err instanceof Error) {
-      return {
-        error: err.message,
-        success: undefined,
-      };
-    }
+   
     return {
       error: "An unknown error occurred.",
       success: undefined,

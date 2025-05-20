@@ -5,6 +5,7 @@ import { findOne } from "@/data/users-data";
 import { connectToDatabase } from "@/lib/db";
 import {validatePassword} from "@/lib/password-utils";
 import { getServerUser } from "@/hooks/get-server-user";
+import { rateLimit } from "@/lib/rate-limit";
 
 export const newSecurity = async (values: z.infer<typeof SecuritySchema>) => {
     const session = await getServerUser();
@@ -19,6 +20,13 @@ if(!validatedFields.success) return {
     error: "Invalid Fields",
     success: undefined
 }
+    const { error } = rateLimit(session.id, true);
+    if (error) {
+        return {
+            error,
+            success: undefined,
+        };
+    }
 
 const {twoFA, newPassword} = validatedFields.data;
 
@@ -67,13 +75,13 @@ try{
 
 }catch(err){
     console.error(`error while resetting security details: ${err}`)
-    if (err instanceof Error) {
-        return {
-          error: err.message,
-          success: undefined,
+    // if (err instanceof Error) {
+    //     return {
+    //       error: err.message,
+    //       success: undefined,
           
-        };
-      }
+    //     };
+    //   }
       return {
         error: "An unknown error occurred.",
         success: undefined,

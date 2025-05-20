@@ -33,13 +33,7 @@ export const deleteAccount = async () => {
     };
   } catch (err) {
     console.error(`Error while deleting account: ${err}`);
-    if (err instanceof Error) {
-      return {
-        error: err.message,
-        success: undefined,
-        redirectUrl: undefined,
-      };
-    }
+    
     return {
       error: "An unknown error occurred.",
       success: undefined,

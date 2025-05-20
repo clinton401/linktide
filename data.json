@@ -1,0 +1,29 @@
+{
+  "response_id": "92a36796-0d95-40a5-be41-fc7613d55422",
+  "text": "Sure! Here is a professional social media post with relevant hashtags:\n\n\"Exciting news! Our team is proud to announce the launch of our brand new website! 🎉 We've worked hard to create a seamless and user-friendly experience for our valued customers. Navigate through our updated product catalog and discover the latest innovations we have to offer. \n\nAs always, we strive to deliver the best possible service, and your feedback is invaluable. Check it out and let us know your thoughts! #NewWebsiteLaunch #UserExperience #Innovation #CustomerFeedback #SeamlessExperience #ProductCatalog #DiscoverAndExplore #WeStriveToServe #ExcitingTimesAhead 🌐🚀\n\nDon't forget to follow us to stay up-to-date with all the latest news and offerings. Your support means a lot to us! #FollowOurJourney #StayConnected #CustomerLove #CommunityIsEverything #WeAreInThisTogether #GratefulHearts 💕\"\n\nRemember to adapt the text and hashtags to your specific industry and offerings to make it more relevant to your audience.",
+  "generation_id": "dc339cc4-6eac-4979-82a8-bd46dc868813",
+  "chat_history": [
+    {
+      "role": "USER",
+      "message": "Write a professional social media post with relevant hashtags"
+    },
+    {
+      "role": "CHATBOT",
+      "message": "Sure! Here is a professional social media post with relevant hashtags:\n\n\"Exciting news! Our team is proud to announce the launch of our brand new website! 🎉 We've worked hard to create a seamless and user-friendly experience for our valued customers. Navigate through our updated product catalog and discover the latest innovations we have to offer. \n\nAs always, we strive to deliver the best possible service, and your feedback is invaluable. Check it out and let us know your thoughts! #NewWebsiteLaunch #UserExperience #Innovation #CustomerFeedback #SeamlessExperience #ProductCatalog #DiscoverAndExplore #WeStriveToServe #ExcitingTimesAhead 🌐🚀\n\nDon't forget to follow us to stay up-to-date with all the latest news and offerings. Your support means a lot to us! #FollowOurJourney #StayConnected #CustomerLove #CommunityIsEverything #WeAreInThisTogether #GratefulHearts 💕\"\n\nRemember to adapt the text and hashtags to your specific industry and offerings to make it more relevant to your audience."
+    }
+  ],
+  "finish_reason": "COMPLETE",
+  "meta": {
+    "api_version": {
+      "version": "1"
+    },
+    "billed_units": {
+      "input_tokens": 9,
+      "output_tokens": 224
+    },
+    "tokens": {
+      "input_tokens": 75,
+      "output_tokens": 224
+    }
+  }
+}

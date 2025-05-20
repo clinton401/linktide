@@ -7,6 +7,7 @@ import { ProfileEditSchema } from "@/schemas";
 import { generateNewEmailVerificationHtml } from "@/lib/mail-html-template";
 import { idGenerator } from "@/lib/auth-utils";
 import NewEmail from "@/models/new-email-schema";
+import { rateLimit } from "@/lib/rate-limit";
 
 import { sendEmail } from "@/lib/mail";
 export const editProfile = async (
@@ -18,6 +19,15 @@ export const editProfile = async (
       error: "User not authorized",
       success: undefined,
       redirectUrl: "/auth/login",
+    };
+  }
+
+  const { error } = rateLimit(session.id, true);
+  if(error){
+    return {
+      error,
+      success: undefined,
+      redirectUrl: undefined,
     };
   }
   const validatedFields = ProfileEditSchema.safeParse(values);
@@ -91,13 +101,7 @@ export const editProfile = async (
     };
   } catch (err) {
     console.error(`error while editing profile details: ${err}`);
-    if (err instanceof Error) {
-      return {
-        error: err.message,
-        success: undefined,
-        redirectUrl: undefined,
-      };
-    }
+    
     return {
       error: "An unknown error occurred.",
       success: undefined,
