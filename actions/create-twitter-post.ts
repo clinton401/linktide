@@ -91,7 +91,7 @@ export const createTwitterPost = async (
         },
       });
 
-      console.log('Tweet with video posted successfully:', tweet);
+      // console.log('Tweet with video posted successfully:', tweet);
       return {
         success: "Tweet with video posted successfully",
         error: undefined,
@@ -107,7 +107,7 @@ export const createTwitterPost = async (
         }
       });
 
-      console.log('Tweet with image posted successfully:', tweet);
+      // console.log('Tweet with image posted successfully:', tweet);
       return {
         success: "Tweet with image posted successfully",
         error: undefined,

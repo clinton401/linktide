@@ -111,34 +111,40 @@ if(showInstagram) {
 
     }
 
+    const tasks = [];
+
     if (showLinkedin) {
-      const {error} = await createLinkedinPost(isVideoChosen, postData )
-      if (error) {
-        console.error(error);
-        if(!platformFailed.includes("linkedin")) {
-            platformFailed.push("linkedin")
-        }
-       
-      } else {
-        amountSucceded++
-      }
-
-
+      tasks.push(
+        createLinkedinPost(isVideoChosen, postData).then(({ error }) => {
+          if (error) {
+            console.error(error);
+            if (!platformFailed.includes("linkedin")) {
+              platformFailed.push("linkedin");
+            }
+          } else {
+            amountSucceded++;
+          }
+        })
+      );
     }
+    
     if (showTwitter) {
-      const {error} = await createTwitterPost(isVideoChosen, postData )
-      if (error) {
-        console.error(error);
-        if(!platformFailed.includes("twitter")) {
-            platformFailed.push("twitter")
-        }
-       
-      } else {
-        amountSucceded++
-      }
-
-
+      tasks.push(
+        createTwitterPost(isVideoChosen, postData).then(({ error }) => {
+          if (error) {
+            console.error(error);
+            if (!platformFailed.includes("twitter")) {
+              platformFailed.push("twitter");
+            }
+          } else {
+            amountSucceded++;
+          }
+        })
+      );
     }
+    
+    await Promise.allSettled(tasks);
+    
     // if (showTiktok) {
     //   const {error} = await createTiktokPost(isVideoChosen, postData )
     //   if (error) {

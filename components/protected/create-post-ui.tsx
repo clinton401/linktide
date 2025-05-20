@@ -376,7 +376,7 @@ if(errorMessage) {
           description: response.data.success || "Post sent successfully!",
         });
         // setIsNewClicked(true)
-        // discardHandler()
+        discardHandler()
       } else {
         // setIsNewClicked(false);
         toast({
